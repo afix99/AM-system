@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 
 export function Card({ className, children }: { className?: string; children: React.ReactNode }) {
   return (
-    <div className={cn("rounded-2xl border border-white/[0.07] bg-[#0C1228]", className)}>
+    <div className={cn("rounded-2xl border border-white/[0.08] bg-[#262220]", className)}>
       {children}
     </div>
   );
@@ -13,7 +13,7 @@ export function CardHeader({ className, children }: { className?: string; childr
 }
 
 export function CardTitle({ className, children }: { className?: string; children: React.ReactNode }) {
-  return <h2 className={cn("font-semibold text-slate-200 text-sm tracking-tight", className)}>{children}</h2>;
+  return <h2 className={cn("font-semibold text-stone-200 text-sm tracking-tight", className)}>{children}</h2>;
 }
 
 export function CardContent({ className, children }: { className?: string; children: React.ReactNode }) {

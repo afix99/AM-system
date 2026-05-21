@@ -40,9 +40,9 @@ export function getPriorityColor(priority: number): string {
   switch (priority) {
     case 1: return 'bg-red-950/60 text-red-400 border-red-500/30'
     case 2: return 'bg-orange-950/60 text-orange-400 border-orange-500/30'
-    case 3: return 'bg-blue-950/60 text-blue-400 border-blue-500/30'
-    case 4: return 'bg-white/[0.04] text-slate-500 border-white/[0.10]'
-    default: return 'bg-blue-950/60 text-blue-400 border-blue-500/30'
+    case 3: return 'bg-stone-800/80 text-stone-400 border-stone-600/40'
+    case 4: return 'bg-white/[0.04] text-stone-500 border-white/[0.10]'
+    default: return 'bg-stone-800/80 text-stone-400 border-stone-600/40'
   }
 }
 

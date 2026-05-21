@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toaster";
 import { formatCurrency } from "@/lib/utils";
 
-const inputCls = "w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50";
+const inputCls = "w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-stone-200 placeholder-stone-600 focus:outline-none focus:border-[#D97756]/40";
 
 function StockForm({ storeId, initial, onSave, onCancel }: any) {
   const [productName, setProductName] = useState(initial?.productName || "");
@@ -25,11 +25,7 @@ function StockForm({ storeId, initial, onSave, onCancel }: any) {
     try {
       const url = initial ? `/api/stock/${initial.id}` : `/api/stores/${storeId}/stock`;
       const method = initial ? "PATCH" : "POST";
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productName, category, size, color, quantity: parseInt(quantity), minStockLevel: parseInt(minStockLevel), sellingPrice: parseFloat(sellingPrice) || 0 }),
-      });
+      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productName, category, size, color, quantity: parseInt(quantity), minStockLevel: parseInt(minStockLevel), sellingPrice: parseFloat(sellingPrice) || 0 }) });
       onSave(await res.json());
     } finally { setSaving(false); }
   };
@@ -38,37 +34,35 @@ function StockForm({ storeId, initial, onSave, onCancel }: any) {
     <div className="border border-white/[0.08] rounded-xl p-4 space-y-3 bg-white/[0.02]">
       <div className="grid grid-cols-2 gap-3">
         <div className="col-span-2">
-          <label className="block text-xs font-medium text-slate-500 mb-1">Product Name *</label>
+          <label className="block text-xs font-medium text-stone-500 mb-1">Product Name *</label>
           <input value={productName} onChange={(e) => { setProductName(e.target.value); setError(""); }} className={inputCls} placeholder="e.g. Sakura Bomber Jacket" />
         </div>
         <div>
-          <label className="block text-xs font-medium text-slate-500 mb-1">Category</label>
+          <label className="block text-xs font-medium text-stone-500 mb-1">Category</label>
           <select value={category} onChange={(e) => setCategory(e.target.value)} className={`${inputCls} appearance-none`} style={{ colorScheme: "dark" }}>
-            {["Bomber Jacket","Track Top","Varsity Jacket","Oversized Tee","Windbreaker"].map((c) => (
-              <option key={c} style={{ background: "#0C1228" }}>{c}</option>
-            ))}
+            {["Bomber Jacket","Track Top","Varsity Jacket","Oversized Tee","Windbreaker"].map((c) => <option key={c} style={{ background: "#262220" }}>{c}</option>)}
           </select>
         </div>
         <div>
-          <label className="block text-xs font-medium text-slate-500 mb-1">Size</label>
+          <label className="block text-xs font-medium text-stone-500 mb-1">Size</label>
           <select value={size} onChange={(e) => setSize(e.target.value)} className={`${inputCls} appearance-none`} style={{ colorScheme: "dark" }}>
-            {["XS","S","M","L","XL","XXL"].map((s) => <option key={s} style={{ background: "#0C1228" }}>{s}</option>)}
+            {["XS","S","M","L","XL","XXL"].map((s) => <option key={s} style={{ background: "#262220" }}>{s}</option>)}
           </select>
         </div>
         <div>
-          <label className="block text-xs font-medium text-slate-500 mb-1">Color</label>
+          <label className="block text-xs font-medium text-stone-500 mb-1">Color</label>
           <input value={color} onChange={(e) => setColor(e.target.value)} className={inputCls} placeholder="Black" />
         </div>
         <div>
-          <label className="block text-xs font-medium text-slate-500 mb-1">Price (RM)</label>
+          <label className="block text-xs font-medium text-stone-500 mb-1">Price (RM)</label>
           <input type="number" value={sellingPrice} onChange={(e) => setSellingPrice(e.target.value)} className={inputCls} placeholder="0" />
         </div>
         <div>
-          <label className="block text-xs font-medium text-slate-500 mb-1">Quantity</label>
+          <label className="block text-xs font-medium text-stone-500 mb-1">Quantity</label>
           <input type="number" value={quantity} onChange={(e) => setQuantity(e.target.value)} className={inputCls} min="0" />
         </div>
         <div>
-          <label className="block text-xs font-medium text-slate-500 mb-1">Min Stock Level</label>
+          <label className="block text-xs font-medium text-stone-500 mb-1">Min Stock Level</label>
           <input type="number" value={minStockLevel} onChange={(e) => setMinStockLevel(e.target.value)} className={inputCls} min="0" />
         </div>
       </div>
@@ -97,11 +91,7 @@ export function StoreStockTab({ store }: { store: any }) {
     const item = items.find((i: any) => i.id === id);
     if (!item) return;
     const newQty = Math.max(0, item.quantity + delta);
-    const res = await fetch(`/api/stock/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ quantity: newQty }),
-    });
+    const res = await fetch(`/api/stock/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ quantity: newQty }) });
     const updated = await res.json();
     setItems((prev: any[]) => prev.map((i) => i.id === id ? updated : i));
   };
@@ -110,12 +100,7 @@ export function StoreStockTab({ store }: { store: any }) {
     const qty = prompt("Enter restock quantity:");
     if (!qty || isNaN(parseInt(qty))) return;
     const item = items.find((i: any) => i.id === id);
-    const newQty = item.quantity + parseInt(qty);
-    const res = await fetch(`/api/stock/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ quantity: newQty, lastRestocked: new Date().toISOString() }),
-    });
+    const res = await fetch(`/api/stock/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ quantity: item.quantity + parseInt(qty), lastRestocked: new Date().toISOString() }) });
     const updated = await res.json();
     setItems((prev: any[]) => prev.map((i) => i.id === id ? updated : i));
     toast(`Restocked +${qty} units`);
@@ -134,13 +119,9 @@ export function StoreStockTab({ store }: { store: any }) {
     <div className="space-y-4 max-w-3xl">
       <div className="flex items-center gap-3">
         <div className="relative flex-1">
-          <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600" />
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search products..."
-            className="w-full pl-8 pr-3 py-2 bg-white/[0.04] border border-white/[0.08] rounded-lg text-sm text-slate-300 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50"
-          />
+          <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-600" />
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search products..."
+            className="w-full pl-8 pr-3 py-2 bg-white/[0.04] border border-white/[0.08] rounded-lg text-sm text-stone-300 placeholder-stone-600 focus:outline-none focus:border-[#D97756]/40" />
         </div>
         <Button size="sm" onClick={() => { setShowAdd(true); setEditId(null); }}><Plus size={14} /> Add Item</Button>
       </div>
@@ -163,14 +144,14 @@ export function StoreStockTab({ store }: { store: any }) {
             <table className="w-full text-sm">
               <thead className="border-b border-white/[0.06]" style={{ background: "rgba(255,255,255,0.02)" }}>
                 <tr>
-                  {["Product", "Category", "Size", "Color", "Price", "Qty", "Min", ""].map((h) => (
-                    <th key={h} className="text-left px-3 py-2.5 font-medium text-slate-500 text-xs whitespace-nowrap">{h}</th>
+                  {["Product","Category","Size","Color","Price","Qty","Min",""].map((h) => (
+                    <th key={h} className="text-left px-3 py-2.5 font-medium text-stone-500 text-xs whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/[0.04]">
                 {filtered.length === 0 ? (
-                  <tr><td colSpan={8} className="py-8 text-center text-slate-600">No items found.</td></tr>
+                  <tr><td colSpan={8} className="py-8 text-center text-stone-600">No items found.</td></tr>
                 ) : filtered.map((item: any) => {
                   const isLow = item.quantity <= item.minStockLevel;
                   if (editId === item.id) return (
@@ -182,28 +163,24 @@ export function StoreStockTab({ store }: { store: any }) {
                   );
                   return (
                     <tr key={item.id} className={`transition-colors ${isLow ? "bg-red-950/20" : "hover:bg-white/[0.02]"}`}>
-                      <td className="px-3 py-2.5 font-medium text-slate-300">{item.productName}</td>
-                      <td className="px-3 py-2.5 text-slate-500">{item.category}</td>
-                      <td className="px-3 py-2.5 text-slate-500">{item.size}</td>
-                      <td className="px-3 py-2.5 text-slate-500">{item.color}</td>
-                      <td className="px-3 py-2.5 text-slate-400">{formatCurrency(item.sellingPrice)}</td>
+                      <td className="px-3 py-2.5 font-medium text-stone-300">{item.productName}</td>
+                      <td className="px-3 py-2.5 text-stone-500">{item.category}</td>
+                      <td className="px-3 py-2.5 text-stone-500">{item.size}</td>
+                      <td className="px-3 py-2.5 text-stone-500">{item.color}</td>
+                      <td className="px-3 py-2.5 text-stone-400">{formatCurrency(item.sellingPrice)}</td>
                       <td className="px-3 py-2.5">
                         <div className="flex items-center gap-1">
-                          <button onClick={() => updateQty(item.id, -1)} className="w-6 h-6 rounded border border-white/[0.08] flex items-center justify-center hover:bg-white/[0.06] text-slate-500 hover:text-slate-300 transition-colors">
-                            <Minus size={10} />
-                          </button>
-                          <span className={`w-8 text-center font-semibold text-sm ${isLow ? "text-red-400" : "text-slate-200"}`}>{item.quantity}</span>
-                          <button onClick={() => updateQty(item.id, 1)} className="w-6 h-6 rounded border border-white/[0.08] flex items-center justify-center hover:bg-white/[0.06] text-slate-500 hover:text-slate-300 transition-colors">
-                            <Plus size={10} />
-                          </button>
+                          <button onClick={() => updateQty(item.id, -1)} className="w-6 h-6 rounded border border-white/[0.08] flex items-center justify-center hover:bg-white/[0.06] text-stone-500 hover:text-stone-300 transition-colors"><Minus size={10} /></button>
+                          <span className={`w-8 text-center font-semibold text-sm ${isLow ? "text-red-400" : "text-stone-200"}`}>{item.quantity}</span>
+                          <button onClick={() => updateQty(item.id, 1)} className="w-6 h-6 rounded border border-white/[0.08] flex items-center justify-center hover:bg-white/[0.06] text-stone-500 hover:text-stone-300 transition-colors"><Plus size={10} /></button>
                         </div>
                       </td>
-                      <td className="px-3 py-2.5 text-slate-600">{item.minStockLevel}</td>
+                      <td className="px-3 py-2.5 text-stone-600">{item.minStockLevel}</td>
                       <td className="px-3 py-2.5">
                         <div className="flex items-center gap-1">
-                          <button onClick={() => restock(item.id)} title="Restock" className="p-1 text-slate-600 hover:text-slate-300 rounded hover:bg-white/[0.06] transition-colors"><RefreshCw size={12} /></button>
-                          <button onClick={() => setEditId(item.id)} className="p-1 text-slate-600 hover:text-slate-300 rounded hover:bg-white/[0.06] transition-colors"><Pencil size={12} /></button>
-                          <button onClick={() => deleteItem(item.id)} className="p-1 text-slate-600 hover:text-red-400 rounded hover:bg-red-950/40 transition-colors"><Trash2 size={12} /></button>
+                          <button onClick={() => restock(item.id)} className="p-1 text-stone-600 hover:text-stone-300 rounded hover:bg-white/[0.06] transition-colors"><RefreshCw size={12} /></button>
+                          <button onClick={() => setEditId(item.id)} className="p-1 text-stone-600 hover:text-stone-300 rounded hover:bg-white/[0.06] transition-colors"><Pencil size={12} /></button>
+                          <button onClick={() => deleteItem(item.id)} className="p-1 text-stone-600 hover:text-red-400 rounded hover:bg-red-950/40 transition-colors"><Trash2 size={12} /></button>
                         </div>
                       </td>
                     </tr>

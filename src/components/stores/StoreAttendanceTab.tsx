@@ -13,14 +13,7 @@ const STATUS_COLORS: Record<AttStatus, string> = {
   Present: "bg-emerald-950/60 text-emerald-400 border-emerald-500/30",
   Late:    "bg-amber-950/60 text-amber-400 border-amber-500/30",
   Absent:  "bg-red-950/60 text-red-400 border-red-500/30",
-  Leave:   "bg-blue-950/60 text-blue-400 border-blue-500/30",
-};
-
-const STATUS_ACTIVE: Record<AttStatus, string> = {
-  Present: "bg-emerald-950/60 text-emerald-400 border-emerald-500/30",
-  Late:    "bg-amber-950/60 text-amber-400 border-amber-500/30",
-  Absent:  "bg-red-950/60 text-red-400 border-red-500/30",
-  Leave:   "bg-blue-950/60 text-blue-400 border-blue-500/30",
+  Leave:   "bg-stone-800/60 text-stone-400 border-stone-600/30",
 };
 
 export function StoreAttendanceTab({ store }: { store: any }) {
@@ -79,34 +72,28 @@ export function StoreAttendanceTab({ store }: { store: any }) {
   return (
     <div className="space-y-4 max-w-2xl">
       <div className="flex items-center gap-2">
-        <button
-          onClick={() => changeDate(-1)}
-          className="p-1.5 rounded-lg hover:bg-white/[0.06] text-slate-500 hover:text-slate-300 border border-white/[0.07] transition-colors"
-        >
+        <button onClick={() => changeDate(-1)} className="p-1.5 rounded-lg hover:bg-white/[0.06] text-stone-500 hover:text-stone-300 border border-white/[0.07] transition-colors">
           <ChevronLeft size={16} />
         </button>
         <input
           type="date"
           value={dateStr}
           onChange={(e) => setSelectedDate(new Date(e.target.value + "T00:00:00"))}
-          className="bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-1.5 text-sm text-slate-300 focus:outline-none focus:border-indigo-500/50"
+          className="bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-1.5 text-sm text-stone-300 focus:outline-none focus:border-[#D97756]/40"
           style={{ colorScheme: "dark" }}
         />
-        <button
-          onClick={() => changeDate(1)}
-          className="p-1.5 rounded-lg hover:bg-white/[0.06] text-slate-500 hover:text-slate-300 border border-white/[0.07] transition-colors"
-        >
+        <button onClick={() => changeDate(1)} className="p-1.5 rounded-lg hover:bg-white/[0.06] text-stone-500 hover:text-stone-300 border border-white/[0.07] transition-colors">
           <ChevronRight size={16} />
         </button>
-        <span className="text-sm text-slate-500 ml-1">{formatDate(selectedDate)}</span>
+        <span className="text-sm text-stone-500 ml-1">{formatDate(selectedDate)}</span>
       </div>
 
       <Card>
         <CardContent className="p-0">
           {loading ? (
-            <div className="py-8 text-center text-slate-600 text-sm">Loading...</div>
+            <div className="py-8 text-center text-stone-600 text-sm">Loading...</div>
           ) : activeStaff.length === 0 ? (
-            <div className="py-8 text-center text-slate-600 text-sm">No active staff.</div>
+            <div className="py-8 text-center text-stone-600 text-sm">No active staff.</div>
           ) : (
             <ul className="divide-y divide-white/[0.04]">
               {activeStaff.map((staff: any) => {
@@ -117,10 +104,14 @@ export function StoreAttendanceTab({ store }: { store: any }) {
                   <li key={staff.id} className="px-4 py-3 hover:bg-white/[0.02]">
                     <div className="flex items-center justify-between mb-2">
                       <div>
-                        <p className="text-sm font-medium text-slate-200">{staff.name}</p>
-                        <p className="text-xs text-slate-600">
+                        <p className="text-sm font-medium text-stone-200">{staff.name}</p>
+                        <p className="text-xs text-stone-600">
                           {staff.role}
-                          {rate !== null && <span className={`ml-1 ${rate >= 80 ? "text-emerald-500" : rate >= 60 ? "text-amber-500" : "text-red-500"}`}>· {rate}% this month</span>}
+                          {rate !== null && (
+                            <span className={`ml-1 ${rate >= 80 ? "text-emerald-500" : rate >= 60 ? "text-amber-500" : "text-red-500"}`}>
+                              · {rate}% this month
+                            </span>
+                          )}
                         </p>
                       </div>
                       {current && <Badge className={STATUS_COLORS[current]}>{current}</Badge>}
@@ -132,8 +123,8 @@ export function StoreAttendanceTab({ store }: { store: any }) {
                           onClick={() => markAttendance(staff.id, s)}
                           className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all min-h-[32px] ${
                             current === s
-                              ? STATUS_ACTIVE[s]
-                              : "border-white/[0.08] bg-white/[0.03] text-slate-500 hover:border-white/20 hover:text-slate-300"
+                              ? STATUS_COLORS[s]
+                              : "border-white/[0.08] bg-white/[0.03] text-stone-500 hover:border-white/20 hover:text-stone-300"
                           }`}
                         >
                           {s}

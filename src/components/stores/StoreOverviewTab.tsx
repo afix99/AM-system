@@ -82,13 +82,13 @@ export function StoreOverviewTab({ store }: { store: any }) {
     setEditing(false);
   };
 
-  const inputCls = "w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50";
-  const labelCls = "block text-xs font-medium text-slate-500 mb-1";
+  const inputCls = "w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-stone-200 placeholder-stone-600 focus:outline-none focus:border-[#D97756]/40";
+  const labelCls = "block text-xs font-medium text-stone-500 mb-1";
 
-  const achieveBarColor = achievement === null ? "#6366f1" :
+  const achieveBarColor = achievement === null ? "#D97756" :
     achievement >= 100 ? "#10b981" :
     achievement >= 80 ? "#f59e0b" : "#ef4444";
-  const achieveTextColor = achievement === null ? "text-slate-400" :
+  const achieveTextColor = achievement === null ? "text-stone-400" :
     achievement >= 100 ? "text-emerald-400" :
     achievement >= 80 ? "text-amber-400" : "text-red-400";
 
@@ -101,7 +101,7 @@ export function StoreOverviewTab({ store }: { store: any }) {
             {!editing && (
               <button
                 onClick={() => setEditing(true)}
-                className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-300 transition-colors border border-white/[0.07] rounded-lg px-2 py-1"
+                className="flex items-center gap-1.5 text-xs text-stone-500 hover:text-stone-300 transition-colors border border-white/[0.07] rounded-lg px-2 py-1"
               >
                 <Pencil size={12} /> Edit
               </button>
@@ -111,64 +111,33 @@ export function StoreOverviewTab({ store }: { store: any }) {
         <CardContent className="space-y-3">
           {editing ? (
             <div className="space-y-3">
-              <div>
-                <label className={labelCls}>Store Name</label>
-                <input value={name} onChange={(e) => setName(e.target.value)} className={inputCls} />
-              </div>
-              <div>
-                <label className={labelCls}>Location</label>
-                <input value={location} onChange={(e) => setLocation(e.target.value)} className={inputCls} />
-              </div>
-              <div>
-                <label className={labelCls}>Phone</label>
-                <input value={phone} onChange={(e) => setPhone(e.target.value)} className={inputCls} />
-              </div>
-              <div>
-                <label className={labelCls}>Manager Name</label>
-                <input value={managerName} onChange={(e) => setManagerName(e.target.value)} className={inputCls} />
-              </div>
-              <div>
-                <label className={labelCls}>Monthly Sales Target (RM)</label>
-                <input type="number" value={targetSales} onChange={(e) => setTargetSales(e.target.value)} className={inputCls} />
-              </div>
+              <div><label className={labelCls}>Store Name</label><input value={name} onChange={(e) => setName(e.target.value)} className={inputCls} /></div>
+              <div><label className={labelCls}>Location</label><input value={location} onChange={(e) => setLocation(e.target.value)} className={inputCls} /></div>
+              <div><label className={labelCls}>Phone</label><input value={phone} onChange={(e) => setPhone(e.target.value)} className={inputCls} /></div>
+              <div><label className={labelCls}>Manager Name</label><input value={managerName} onChange={(e) => setManagerName(e.target.value)} className={inputCls} /></div>
+              <div><label className={labelCls}>Monthly Sales Target (RM)</label><input type="number" value={targetSales} onChange={(e) => setTargetSales(e.target.value)} className={inputCls} /></div>
               <div className="flex gap-2 pt-1">
-                <Button onClick={saveStoreInfo} disabled={editSaving} size="sm">
-                  <Save size={14} /> {editSaving ? "Saving..." : "Save Changes"}
-                </Button>
-                <Button onClick={cancelEdit} variant="ghost" size="sm">
-                  <X size={14} /> Cancel
-                </Button>
+                <Button onClick={saveStoreInfo} disabled={editSaving} size="sm"><Save size={14} /> {editSaving ? "Saving..." : "Save Changes"}</Button>
+                <Button onClick={cancelEdit} variant="ghost" size="sm"><X size={14} /> Cancel</Button>
               </div>
             </div>
           ) : (
             <>
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-indigo-950/50 border border-indigo-500/20 flex items-center justify-center shrink-0">
-                  <MapPin size={14} className="text-indigo-400" />
+              {[
+                { icon: <MapPin size={14} className="text-[#D97756]" />, label: "Location", value: store.location },
+                { icon: <Phone size={14} className="text-[#D97756]" />, label: "Phone", value: store.phone || "—" },
+                { icon: <User size={14} className="text-[#D97756]" />, label: "Manager", value: store.managerName || "—" },
+              ].map(({ icon, label, value }) => (
+                <div key={label} className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg border border-[#D97756]/20 flex items-center justify-center shrink-0" style={{ background: "rgba(217,119,86,0.08)" }}>
+                    {icon}
+                  </div>
+                  <div>
+                    <p className="text-xs text-stone-500 font-medium uppercase tracking-wide">{label}</p>
+                    <p className="text-sm text-stone-300 mt-0.5">{value}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Location</p>
-                  <p className="text-sm text-slate-300 mt-0.5">{store.location}</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-indigo-950/50 border border-indigo-500/20 flex items-center justify-center shrink-0">
-                  <Phone size={14} className="text-indigo-400" />
-                </div>
-                <div>
-                  <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Phone</p>
-                  <p className="text-sm text-slate-300 mt-0.5">{store.phone || "—"}</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-indigo-950/50 border border-indigo-500/20 flex items-center justify-center shrink-0">
-                  <User size={14} className="text-indigo-400" />
-                </div>
-                <div>
-                  <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Manager</p>
-                  <p className="text-sm text-slate-300 mt-0.5">{store.managerName || "—"}</p>
-                </div>
-              </div>
+              ))}
             </>
           )}
         </CardContent>
@@ -180,48 +149,30 @@ export function StoreOverviewTab({ store }: { store: any }) {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className={labelCls}>Actual Sales (RM)</label>
-              <input
-                type="number"
-                value={totalSales}
-                onChange={(e) => setTotalSales(e.target.value)}
-                placeholder="0"
-                className={inputCls}
-              />
+              <input type="number" value={totalSales} onChange={(e) => setTotalSales(e.target.value)} placeholder="0" className={inputCls} />
             </div>
             <div>
               <label className={labelCls}>Target (RM)</label>
-              <p className="mt-2 text-sm font-semibold text-slate-300">{formatCurrency(store.targetMonthlySales)}</p>
+              <p className="text-sm font-semibold text-stone-300 mt-2">{formatCurrency(store.targetMonthlySales)}</p>
             </div>
           </div>
-
           {achievement !== null && (
             <div>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-slate-500">Achievement</span>
+                <span className="text-xs text-stone-500">Achievement</span>
                 <span className={`text-sm font-bold ${achieveTextColor}`}>{achievement}%</span>
               </div>
               <div className="h-2 bg-white/[0.06] rounded-full overflow-hidden">
-                <div
-                  className="h-full rounded-full transition-all duration-500"
-                  style={{ width: `${Math.min(achievement, 100)}%`, background: achieveBarColor }}
-                />
+                <div className="h-full rounded-full transition-all duration-500" style={{ width: `${Math.min(achievement, 100)}%`, background: achieveBarColor }} />
               </div>
             </div>
           )}
-
           <div>
             <label className={labelCls}>Area Manager Notes</label>
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              rows={3}
-              placeholder="Add notes about this month's performance..."
-              className={`${inputCls} resize-none`}
-            />
+            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} placeholder="Add notes about this month's performance..."
+              className={`${inputCls} resize-none`} />
           </div>
-          <Button onClick={saveSales} disabled={saving} size="sm">
-            <Save size={14} /> {saving ? "Saving..." : "Save"}
-          </Button>
+          <Button onClick={saveSales} disabled={saving} size="sm"><Save size={14} /> {saving ? "Saving..." : "Save"}</Button>
         </CardContent>
       </Card>
     </div>

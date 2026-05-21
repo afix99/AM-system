@@ -59,41 +59,32 @@ export function TasksClient({ initialTasks, stores }: { initialTasks: any[]; sto
       <div className={`flex items-start gap-3 px-4 py-3.5 border-b border-white/[0.04] last:border-0 hover:bg-white/[0.02] transition-colors ${isOverdue ? "bg-red-950/20" : ""}`}>
         <Badge className={`mt-0.5 shrink-0 ${getPriorityColor(task.priority)}`}>{getPriorityLabel(task.priority)}</Badge>
         <div className="flex-1 min-w-0">
-          <p className={`text-sm font-medium ${isOverdue ? "text-red-400" : task.status === "done" ? "text-slate-600 line-through" : "text-slate-200"}`}>
+          <p className={`text-sm font-medium ${isOverdue ? "text-red-400" : task.status === "done" ? "text-stone-600 line-through" : "text-stone-200"}`}>
             {task.title}
           </p>
           <div className="flex items-center gap-2 mt-1 flex-wrap">
             {task.store && (
-              <span className="text-xs text-slate-500 bg-white/[0.05] px-1.5 py-0.5 rounded border border-white/[0.07]">
+              <span className="text-xs text-stone-500 bg-white/[0.05] px-1.5 py-0.5 rounded border border-white/[0.07]">
                 {task.store.name}
               </span>
             )}
             {task.dueDate && (
-              <span className={`text-xs ${isOverdue ? "text-red-500 font-semibold" : "text-slate-600"}`}>
+              <span className={`text-xs ${isOverdue ? "text-red-500 font-semibold" : "text-stone-600"}`}>
                 {isOverdue ? "Overdue · " : "Due "}{formatDate(task.dueDate)}
               </span>
             )}
-            {task.notes && <span className="text-xs text-slate-600 truncate max-w-[200px]">{task.notes}</span>}
+            {task.notes && <span className="text-xs text-stone-600 truncate max-w-[200px]">{task.notes}</span>}
           </div>
         </div>
         {showDoneBtn && (
           <div className="flex items-center gap-1 shrink-0">
-            <button
-              onClick={() => { setEditTask(task); setShowModal(true); }}
-              className="p-1.5 text-slate-600 hover:text-slate-300 rounded hover:bg-white/[0.06] transition-colors"
-            >
+            <button onClick={() => { setEditTask(task); setShowModal(true); }} className="p-1.5 text-stone-600 hover:text-stone-300 rounded hover:bg-white/[0.06] transition-colors">
               <Pencil size={14} />
             </button>
-            <button
-              onClick={() => markDone(task.id)}
-              className="text-xs text-emerald-400 hover:text-emerald-300 font-medium border border-emerald-500/30 hover:bg-emerald-950/40 px-2 py-1 rounded transition-colors"
-            >
+            <button onClick={() => markDone(task.id)} className="text-xs text-emerald-400 hover:text-emerald-300 font-medium border border-emerald-500/30 hover:bg-emerald-950/40 px-2 py-1 rounded transition-colors">
               Done
             </button>
-            <button
-              onClick={() => deleteTask(task.id)}
-              className="p-1.5 text-slate-600 hover:text-red-400 rounded hover:bg-red-950/40 transition-colors"
-            >
+            <button onClick={() => deleteTask(task.id)} className="p-1.5 text-stone-600 hover:text-red-400 rounded hover:bg-red-950/40 transition-colors">
               <Trash2 size={14} />
             </button>
           </div>
@@ -106,43 +97,39 @@ export function TasksClient({ initialTasks, stores }: { initialTasks: any[]; sto
     <div className="p-4 md:p-6 space-y-5 max-w-3xl mx-auto w-full">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-xs font-medium text-indigo-400/80 uppercase tracking-widest mb-0.5">Manage</p>
-          <h1 className="text-2xl font-bold text-slate-100">Tasks</h1>
+          <p className="text-xs font-medium text-[#D97756]/80 uppercase tracking-widest mb-0.5">Manage</p>
+          <h1 className="text-2xl font-bold text-stone-100">Tasks</h1>
         </div>
         <Button size="sm" onClick={() => { setEditTask(null); setShowModal(true); }}>
           <Plus size={14} /> Add Task
         </Button>
       </div>
 
-      {/* Filters */}
       <div className="flex gap-2 flex-wrap">
         {FILTERS.map((f) => (
           <button key={f} onClick={() => setFilter(f)}
             className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
               filter === f
-                ? "bg-indigo-600 text-white shadow-lg shadow-indigo-900/40"
-                : "bg-white/[0.04] border border-white/[0.08] text-slate-500 hover:border-white/20 hover:text-slate-300"
+                ? "bg-[#D97756] text-white shadow-lg shadow-[#D97756]/20"
+                : "bg-white/[0.04] border border-white/[0.08] text-stone-500 hover:border-white/20 hover:text-stone-300"
             }`}>
             {f}
           </button>
         ))}
-        <select
-          value={storeFilter}
-          onChange={(e) => setStoreFilter(e.target.value)}
-          className="px-3 py-1.5 rounded-full text-xs font-medium border border-white/[0.08] bg-white/[0.04] text-slate-500 focus:outline-none"
-          style={{ colorScheme: "dark" }}
-        >
-          <option value="" style={{ background: "#0C1228" }}>All Stores</option>
-          {stores.map((s) => <option key={s.id} value={s.id} style={{ background: "#0C1228" }}>{s.name}</option>)}
+        <select value={storeFilter} onChange={(e) => setStoreFilter(e.target.value)}
+          className="px-3 py-1.5 rounded-full text-xs font-medium border border-white/[0.08] bg-white/[0.04] text-stone-500 focus:outline-none"
+          style={{ colorScheme: "dark" }}>
+          <option value="" style={{ background: "#262220" }}>All Stores</option>
+          {stores.map((s) => <option key={s.id} value={s.id} style={{ background: "#262220" }}>{s.name}</option>)}
         </select>
       </div>
 
       <Card>
         <CardContent className="p-0">
           {sorted.length === 0 ? (
-            <div className="py-12 text-center text-slate-600 text-sm">
+            <div className="py-12 text-center text-stone-600 text-sm">
               No tasks{filter !== "All" ? ` matching "${filter}"` : ""}.{" "}
-              <button onClick={() => { setEditTask(null); setShowModal(true); }} className="text-indigo-400 hover:text-indigo-300 underline">
+              <button onClick={() => { setEditTask(null); setShowModal(true); }} className="text-[#D97756] hover:text-[#E8926A] underline">
                 Add one?
               </button>
             </div>
@@ -154,10 +141,8 @@ export function TasksClient({ initialTasks, stores }: { initialTasks: any[]; sto
 
       {done.length > 0 && (
         <div>
-          <button
-            onClick={() => setShowDone(!showDone)}
-            className="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-400 mb-2 transition-colors"
-          >
+          <button onClick={() => setShowDone(!showDone)}
+            className="flex items-center gap-2 text-sm font-medium text-stone-600 hover:text-stone-400 mb-2 transition-colors">
             {showDone ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             Completed ({done.length})
           </button>

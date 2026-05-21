@@ -23,9 +23,9 @@ export default async function StoresPage() {
   return (
     <div className="p-4 md:p-6 max-w-3xl mx-auto w-full">
       <div className="mb-6">
-        <p className="text-xs font-medium text-indigo-400/80 uppercase tracking-widest mb-1">Overview</p>
-        <h1 className="text-2xl font-bold text-slate-100">Stores</h1>
-        <p className="text-sm text-slate-600 mt-0.5">{stores.length} active locations</p>
+        <p className="text-xs font-medium text-[#D97756]/80 uppercase tracking-widest mb-1">Overview</p>
+        <h1 className="text-2xl font-bold text-stone-100">Stores</h1>
+        <p className="text-sm text-stone-600 mt-0.5">{stores.length} active locations</p>
       </div>
 
       <div className="space-y-3">
@@ -44,21 +44,21 @@ export default async function StoresPage() {
 
           return (
             <Link key={store.id} href={`/stores/${store.id}`}>
-              <div className="rounded-2xl border border-white/[0.07] bg-[#0C1228] hover:border-indigo-500/30 hover:bg-[#0e1530] transition-all cursor-pointer group p-4">
+              <div className="rounded-2xl border border-white/[0.07] bg-[#262220] hover:border-[#D97756]/30 hover:bg-[#2E2420] transition-all cursor-pointer group p-4">
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-indigo-950/60 border border-indigo-500/20 flex items-center justify-center shrink-0 group-hover:border-indigo-500/40 transition-colors">
-                    <Store size={18} className="text-indigo-400" />
+                  <div className="w-10 h-10 rounded-xl border border-[#D97756]/20 flex items-center justify-center shrink-0 group-hover:border-[#D97756]/40 transition-colors" style={{ background: "rgba(217,119,86,0.10)" }}>
+                    <Store size={18} className="text-[#D97756]" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <p className="font-semibold text-slate-200 text-sm group-hover:text-white transition-colors">{store.name}</p>
+                      <p className="font-semibold text-stone-200 text-sm group-hover:text-white transition-colors">{store.name}</p>
                       {lowStock > 0 && (
                         <span className="text-xs text-red-400 font-medium bg-red-950/50 px-1.5 py-0.5 rounded-full border border-red-500/20">
                           {lowStock} low stock
                         </span>
                       )}
                     </div>
-                    <div className="flex items-center gap-1 text-xs text-slate-600 mb-3">
+                    <div className="flex items-center gap-1 text-xs text-stone-600 mb-3">
                       <MapPin size={11} className="shrink-0" />
                       <span className="truncate">{store.location}</span>
                     </div>
@@ -68,11 +68,11 @@ export default async function StoresPage() {
                         <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden mb-1.5">
                           <div
                             className="h-full rounded-full transition-all"
-                            style={{ width: `${Math.min(achievement ?? 0, 100)}%`, background: barColor ?? "#6366f1" }}
+                            style={{ width: `${Math.min(achievement ?? 0, 100)}%`, background: barColor ?? "#D97756" }}
                           />
                         </div>
-                        <div className="flex justify-between text-xs text-slate-600">
-                          <span className="text-slate-400 font-medium">{formatCurrency(perf.totalSales)}</span>
+                        <div className="flex justify-between text-xs text-stone-600">
+                          <span className="text-stone-400 font-medium">{formatCurrency(perf.totalSales)}</span>
                           <span>/ {formatCurrency(perf.targetSales)}</span>
                         </div>
                       </div>
@@ -80,7 +80,7 @@ export default async function StoresPage() {
                       <div className="h-1.5 bg-white/[0.06] rounded-full" />
                     )}
 
-                    <div className="flex items-center gap-3 mt-2.5 text-xs text-slate-600">
+                    <div className="flex items-center gap-3 mt-2.5 text-xs text-stone-600">
                       <span className="flex items-center gap-1"><Users size={11} /> {store.staff.length} staff</span>
                       <span className="text-white/10">·</span>
                       <span>{store.managerName}</span>
@@ -91,10 +91,10 @@ export default async function StoresPage() {
                     {achievement !== null ? (
                       <span className={`text-xl font-bold ${achieveColor}`}>{achievement}%</span>
                     ) : (
-                      <span className="text-base text-slate-700 font-medium">—</span>
+                      <span className="text-base text-stone-700 font-medium">—</span>
                     )}
-                    <span className="text-xs text-slate-600">this month</span>
-                    <ChevronRight size={14} className="text-slate-700 group-hover:text-indigo-400 transition-colors mt-1" />
+                    <span className="text-xs text-stone-600">this month</span>
+                    <ChevronRight size={14} className="text-stone-700 group-hover:text-[#D97756] transition-colors mt-1" />
                   </div>
                 </div>
               </div>

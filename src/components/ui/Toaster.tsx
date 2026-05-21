@@ -28,17 +28,17 @@ export function Toaster() {
             key={t.id}
             className={`flex items-center gap-3 px-4 py-3 rounded-xl border text-sm font-medium toast-enter pointer-events-auto backdrop-blur-sm ${
               t.type === "success"
-                ? "bg-emerald-950/90 border-emerald-500/30 text-emerald-300"
-                : "bg-red-950/90 border-red-500/30 text-red-300"
+                ? "bg-stone-900/95 border-[#D97756]/30 text-stone-200"
+                : "bg-stone-900/95 border-red-500/30 text-red-300"
             }`}
           >
             {t.type === "success"
-              ? <CheckCircle size={16} className="text-emerald-400 shrink-0" />
+              ? <CheckCircle size={16} className="text-[#D97756] shrink-0" />
               : <XCircle size={16} className="text-red-400 shrink-0" />}
             <span className="flex-1">{t.message}</span>
             <button
               onClick={() => setToasts((prev) => prev.filter((x) => x.id !== t.id))}
-              className="text-current opacity-50 hover:opacity-100 transition-opacity"
+              className="text-stone-500 hover:text-stone-300 transition-colors"
             >
               <X size={14} />
             </button>

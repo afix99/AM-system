@@ -94,7 +94,6 @@ export function DashboardClient({ stores, tasks: initialTasks, checklist: initia
   });
 
   const progress = items.length > 0 ? Math.round((completed.length / items.length) * 100) : 0;
-
   const totalSales = stores.reduce((sum, s) => sum + (s.performances?.[0]?.totalSales || 0), 0);
   const totalTarget = stores.reduce((sum, s) => sum + (s.performances?.[0]?.targetSales || 0), 0);
   const overallAchievement = totalTarget > 0 ? Math.round((totalSales / totalTarget) * 100) : null;
@@ -105,31 +104,31 @@ export function DashboardClient({ stores, tasks: initialTasks, checklist: initia
     <div className="p-4 md:p-6 space-y-6 max-w-5xl mx-auto w-full">
       {/* Header */}
       <div>
-        <p className="text-xs font-medium text-indigo-400/80 uppercase tracking-widest mb-1">Overview</p>
-        <h1 className="text-2xl font-bold text-slate-100">Dashboard</h1>
-        <p className="text-slate-500 text-sm mt-0.5">{weekLabel}</p>
+        <p className="text-xs font-medium text-[#D97756]/80 uppercase tracking-widest mb-1">Overview</p>
+        <h1 className="text-2xl font-bold text-stone-100">Dashboard</h1>
+        <p className="text-stone-500 text-sm mt-0.5">{weekLabel}</p>
       </div>
 
       {/* KPI Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="rounded-2xl p-4 border border-white/[0.07]" style={{ background: "linear-gradient(135deg, #1e1b4b 0%, #0C1228 100%)" }}>
-          <p className="text-xs text-slate-500 mb-1">Stores</p>
-          <p className="text-2xl font-bold text-slate-100">{stores.length}</p>
-          <p className="text-xs text-indigo-400 mt-1">Active</p>
+        <div className="rounded-2xl p-4 border border-white/[0.07]" style={{ background: "linear-gradient(135deg, #2d1f14 0%, #262220 100%)" }}>
+          <p className="text-xs text-stone-500 mb-1">Stores</p>
+          <p className="text-2xl font-bold text-stone-100">{stores.length}</p>
+          <p className="text-xs text-[#D97756] mt-1">Active</p>
         </div>
-        <div className="rounded-2xl p-4 border border-white/[0.07]" style={{ background: "linear-gradient(135deg, #052e16 0%, #0C1228 100%)" }}>
-          <p className="text-xs text-slate-500 mb-1">Sales</p>
-          <p className="text-2xl font-bold text-slate-100">{overallAchievement !== null ? `${overallAchievement}%` : "—"}</p>
+        <div className="rounded-2xl p-4 border border-white/[0.07]" style={{ background: "linear-gradient(135deg, #052e16 0%, #262220 100%)" }}>
+          <p className="text-xs text-stone-500 mb-1">Sales</p>
+          <p className="text-2xl font-bold text-stone-100">{overallAchievement !== null ? `${overallAchievement}%` : "—"}</p>
           <p className="text-xs text-emerald-400 mt-1">vs target</p>
         </div>
-        <div className={`rounded-2xl p-4 border border-white/[0.07]`} style={{ background: lowStockCount > 0 ? "linear-gradient(135deg, #3b0764 0%, #0C1228 100%)" : "linear-gradient(135deg, #0c1a2e 0%, #0C1228 100%)" }}>
-          <p className="text-xs text-slate-500 mb-1">Low Stock</p>
-          <p className={`text-2xl font-bold ${lowStockCount > 0 ? "text-red-400" : "text-slate-100"}`}>{lowStockCount}</p>
-          <p className={`text-xs mt-1 ${lowStockCount > 0 ? "text-red-500" : "text-slate-600"}`}>items</p>
+        <div className="rounded-2xl p-4 border border-white/[0.07]" style={{ background: lowStockCount > 0 ? "linear-gradient(135deg, #3b0a0a 0%, #262220 100%)" : "linear-gradient(135deg, #1e1a18 0%, #262220 100%)" }}>
+          <p className="text-xs text-stone-500 mb-1">Low Stock</p>
+          <p className={`text-2xl font-bold ${lowStockCount > 0 ? "text-red-400" : "text-stone-100"}`}>{lowStockCount}</p>
+          <p className={`text-xs mt-1 ${lowStockCount > 0 ? "text-red-500" : "text-stone-600"}`}>items</p>
         </div>
-        <div className="rounded-2xl p-4 border border-white/[0.07]" style={{ background: "linear-gradient(135deg, #1c1917 0%, #0C1228 100%)" }}>
-          <p className="text-xs text-slate-500 mb-1">Tasks</p>
-          <p className="text-2xl font-bold text-slate-100">{pendingTaskCount}</p>
+        <div className="rounded-2xl p-4 border border-white/[0.07]" style={{ background: "linear-gradient(135deg, #1c1917 0%, #262220 100%)" }}>
+          <p className="text-xs text-stone-500 mb-1">Tasks</p>
+          <p className="text-2xl font-bold text-stone-100">{pendingTaskCount}</p>
           <p className="text-xs text-amber-500 mt-1">pending</p>
         </div>
       </div>
@@ -141,7 +140,7 @@ export function DashboardClient({ stores, tasks: initialTasks, checklist: initia
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>This Week</CardTitle>
-                <span className="text-xs text-slate-500 font-medium bg-white/[0.05] px-2 py-0.5 rounded-full border border-white/[0.07]">
+                <span className="text-xs text-stone-500 font-medium bg-white/[0.05] px-2 py-0.5 rounded-full border border-white/[0.07]">
                   {completed.length}/{items.length}
                 </span>
               </div>
@@ -150,11 +149,11 @@ export function DashboardClient({ stores, tasks: initialTasks, checklist: initia
                   className="h-full rounded-full transition-all duration-500"
                   style={{
                     width: `${progress}%`,
-                    background: progress >= 100 ? "#10b981" : "linear-gradient(90deg, #6366f1, #818cf8)",
+                    background: progress >= 100 ? "#10b981" : "linear-gradient(90deg, #D97756, #E8926A)",
                   }}
                 />
               </div>
-              <p className="text-xs text-slate-600 mt-1">{progress}% complete</p>
+              <p className="text-xs text-stone-600 mt-1">{progress}% complete</p>
             </CardHeader>
             <CardContent className="p-0">
               <ul className="divide-y divide-white/[0.04]">
@@ -164,19 +163,16 @@ export function DashboardClient({ stores, tasks: initialTasks, checklist: initia
                       onClick={() => toggleItem(item.id)}
                       className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-all ${
                         completed.includes(item.id)
-                          ? "bg-emerald-500 border-emerald-500 text-white"
-                          : "border-white/20 hover:border-indigo-400"
+                          ? "bg-[#D97756] border-[#D97756] text-white"
+                          : "border-white/20 hover:border-[#D97756]/60"
                       }`}
                     >
                       {completed.includes(item.id) && <Check size={10} strokeWidth={3} />}
                     </button>
-                    <span className={`flex-1 text-sm transition-colors ${completed.includes(item.id) ? "line-through text-slate-600" : "text-slate-300"}`}>
+                    <span className={`flex-1 text-sm transition-colors ${completed.includes(item.id) ? "line-through text-stone-600" : "text-stone-300"}`}>
                       {item.text}
                     </span>
-                    <button
-                      onClick={() => removeItem(item.id)}
-                      className="opacity-0 group-hover:opacity-100 text-slate-600 hover:text-red-400 transition-all"
-                    >
+                    <button onClick={() => removeItem(item.id)} className="opacity-0 group-hover:opacity-100 text-stone-600 hover:text-red-400 transition-all">
                       <X size={13} />
                     </button>
                   </li>
@@ -189,9 +185,9 @@ export function DashboardClient({ stores, tasks: initialTasks, checklist: initia
                   onChange={(e) => setNewItemText(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && addItem()}
                   placeholder="Add item..."
-                  className="flex-1 text-sm bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-1.5 text-slate-300 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50"
+                  className="flex-1 text-sm bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-1.5 text-stone-300 placeholder-stone-600 focus:outline-none focus:border-[#D97756]/40"
                 />
-                <button onClick={addItem} className="text-slate-500 hover:text-indigo-400 transition-colors px-2">
+                <button onClick={addItem} className="text-stone-500 hover:text-[#D97756] transition-colors px-2">
                   <Plus size={16} />
                 </button>
               </div>
@@ -212,9 +208,9 @@ export function DashboardClient({ stores, tasks: initialTasks, checklist: initia
             </CardHeader>
             <CardContent className="p-0">
               {sortedTasks.length === 0 ? (
-                <div className="py-10 text-center text-slate-600 text-sm">
+                <div className="py-10 text-center text-stone-600 text-sm">
                   No pending tasks.{" "}
-                  <button className="text-indigo-400 hover:text-indigo-300 underline" onClick={() => setShowAddTask(true)}>
+                  <button className="text-[#D97756] hover:text-[#E8926A] underline" onClick={() => setShowAddTask(true)}>
                     Add one?
                   </button>
                 </div>
@@ -223,27 +219,21 @@ export function DashboardClient({ stores, tasks: initialTasks, checklist: initia
                   {sortedTasks.map((task) => {
                     const isOverdue = task.dueDate && new Date(task.dueDate) < todayDate;
                     return (
-                      <li
-                        key={task.id}
-                        className={`flex items-start gap-3 px-4 py-3 ${isOverdue ? "bg-red-950/30" : "hover:bg-white/[0.02]"}`}
-                      >
+                      <li key={task.id} className={`flex items-start gap-3 px-4 py-3 ${isOverdue ? "bg-red-950/20" : "hover:bg-white/[0.02]"}`}>
                         <Badge className={`mt-0.5 shrink-0 ${getPriorityColor(task.priority)}`}>
                           {getPriorityLabel(task.priority)}
                         </Badge>
                         <div className="flex-1 min-w-0">
-                          <p className={`text-sm font-medium ${isOverdue ? "text-red-400" : "text-slate-200"}`}>
-                            {task.title}
-                          </p>
+                          <p className={`text-sm font-medium ${isOverdue ? "text-red-400" : "text-stone-200"}`}>{task.title}</p>
                           <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                             {task.store && (
-                              <span className="text-xs text-slate-500 bg-white/[0.05] px-1.5 py-0.5 rounded border border-white/[0.07]">
+                              <span className="text-xs text-stone-500 bg-white/[0.05] px-1.5 py-0.5 rounded border border-white/[0.07]">
                                 {task.store.name}
                               </span>
                             )}
                             {task.dueDate && (
-                              <span className={`text-xs ${isOverdue ? "text-red-500 font-semibold" : "text-slate-600"}`}>
-                                {isOverdue ? "Overdue · " : "Due "}
-                                {formatDate(task.dueDate)}
+                              <span className={`text-xs ${isOverdue ? "text-red-500 font-semibold" : "text-stone-600"}`}>
+                                {isOverdue ? "Overdue · " : "Due "}{formatDate(task.dueDate)}
                               </span>
                             )}
                           </div>
@@ -260,7 +250,7 @@ export function DashboardClient({ stores, tasks: initialTasks, checklist: initia
                 </ul>
               )}
               <div className="px-4 py-3 border-t border-white/[0.04]">
-                <Link href="/tasks" className="text-sm text-slate-600 hover:text-slate-300 flex items-center gap-1 transition-colors">
+                <Link href="/tasks" className="text-sm text-stone-600 hover:text-stone-300 flex items-center gap-1 transition-colors">
                   View all tasks <ChevronRight size={14} />
                 </Link>
               </div>
@@ -271,8 +261,8 @@ export function DashboardClient({ stores, tasks: initialTasks, checklist: initia
 
       {/* Store Snapshot */}
       <div>
-        <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-          <TrendingUp size={14} className="text-indigo-400" />
+        <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+          <TrendingUp size={14} className="text-[#D97756]" />
           Store Snapshot
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -283,33 +273,33 @@ export function DashboardClient({ stores, tasks: initialTasks, checklist: initia
               : null;
             const lowStock = store.stockItems.filter((i: any) => i.quantity <= i.minStockLevel).length;
             const activeStaff = store.staff.length;
-            const achieveColor = achievement === null ? "text-slate-500" : achievement >= 100 ? "text-emerald-400" : achievement >= 80 ? "text-amber-400" : "text-red-400";
+            const achieveColor = achievement === null ? "text-stone-500" : achievement >= 100 ? "text-emerald-400" : achievement >= 80 ? "text-amber-400" : "text-red-400";
 
             return (
               <Link key={store.id} href={`/stores/${store.id}`}>
-                <div className="rounded-2xl border border-white/[0.07] bg-[#0C1228] hover:border-indigo-500/30 hover:bg-[#0e1530] transition-all cursor-pointer group p-4">
+                <div className="rounded-2xl border border-white/[0.07] bg-[#262220] hover:border-[#D97756]/30 hover:bg-[#2E2420] transition-all cursor-pointer group p-4">
                   <div className="flex items-start justify-between mb-3">
                     <div>
-                      <p className="font-semibold text-slate-200 text-sm group-hover:text-white transition-colors">{store.name}</p>
-                      <p className="text-xs text-slate-600 mt-0.5">{store.managerName}</p>
+                      <p className="font-semibold text-stone-200 text-sm group-hover:text-white transition-colors">{store.name}</p>
+                      <p className="text-xs text-stone-600 mt-0.5">{store.managerName}</p>
                     </div>
-                    <ChevronRight size={15} className="text-slate-700 group-hover:text-indigo-400 transition-colors mt-0.5" />
+                    <ChevronRight size={15} className="text-stone-700 group-hover:text-[#D97756] transition-colors mt-0.5" />
                   </div>
 
                   <div className="grid grid-cols-3 gap-2 text-center mb-3">
                     <div className="bg-white/[0.03] rounded-xl p-2 border border-white/[0.05]">
-                      <Users size={12} className="mx-auto text-slate-600 mb-0.5" />
-                      <p className="text-sm font-bold text-slate-200">{activeStaff}</p>
-                      <p className="text-xs text-slate-600">Staff</p>
+                      <Users size={12} className="mx-auto text-stone-600 mb-0.5" />
+                      <p className="text-sm font-bold text-stone-200">{activeStaff}</p>
+                      <p className="text-xs text-stone-600">Staff</p>
                     </div>
                     <div className="bg-white/[0.03] rounded-xl p-2 border border-white/[0.05]">
                       <p className={`text-sm font-bold ${achieveColor}`}>{achievement !== null ? `${achievement}%` : "—"}</p>
-                      <p className="text-xs text-slate-600">Sales</p>
+                      <p className="text-xs text-stone-600">Sales</p>
                     </div>
                     <div className={`rounded-xl p-2 border ${lowStock > 0 ? "bg-red-950/30 border-red-500/20" : "bg-white/[0.03] border-white/[0.05]"}`}>
-                      <Package size={12} className={`mx-auto mb-0.5 ${lowStock > 0 ? "text-red-500" : "text-slate-600"}`} />
-                      <p className={`text-sm font-bold ${lowStock > 0 ? "text-red-400" : "text-slate-200"}`}>{lowStock}</p>
-                      <p className={`text-xs ${lowStock > 0 ? "text-red-600" : "text-slate-600"}`}>Low</p>
+                      <Package size={12} className={`mx-auto mb-0.5 ${lowStock > 0 ? "text-red-500" : "text-stone-600"}`} />
+                      <p className={`text-sm font-bold ${lowStock > 0 ? "text-red-400" : "text-stone-200"}`}>{lowStock}</p>
+                      <p className={`text-xs ${lowStock > 0 ? "text-red-600" : "text-stone-600"}`}>Low</p>
                     </div>
                   </div>
 
@@ -324,8 +314,8 @@ export function DashboardClient({ stores, tasks: initialTasks, checklist: initia
                           }}
                         />
                       </div>
-                      <div className="flex justify-between text-xs text-slate-600">
-                        <span className="text-slate-500">{formatCurrency(perf.totalSales)}</span>
+                      <div className="flex justify-between text-xs text-stone-600">
+                        <span className="text-stone-500">{formatCurrency(perf.totalSales)}</span>
                         <span>/ {formatCurrency(perf.targetSales)}</span>
                       </div>
                     </>
