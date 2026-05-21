@@ -1,13 +1,20 @@
 import { prisma } from "@/lib/prisma";
 import { StaffDirectoryClient } from "@/components/staff/StaffDirectoryClient";
+import { purgeResignedStaff } from "@/lib/staffCleanup";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function StaffPage() {
+  await purgeResignedStaff();
+
   const stores = await prisma.store.findMany({
     where: { status: "active" },
     include: {
-      staff: { where: { status: { not: "resigned" } }, orderBy: { name: "asc" } },
+      staff: {
+        where: { status: { in: ["active", "on leave", "on-leave"] } },
+        orderBy: { name: "asc" },
+      },
     },
     orderBy: { name: "asc" },
   });
