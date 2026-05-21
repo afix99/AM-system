@@ -7,7 +7,7 @@ export default async function StaffPage() {
   const stores = await prisma.store.findMany({
     where: { status: "active" },
     include: {
-      staff: { orderBy: { name: "asc" } },
+      staff: { where: { status: { not: "resigned" } }, orderBy: { name: "asc" } },
     },
     orderBy: { name: "asc" },
   });

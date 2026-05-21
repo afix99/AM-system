@@ -9,7 +9,7 @@ export default async function StoreDetailPage({ params }: { params: Promise<{ id
   const store = await prisma.store.findUnique({
     where: { id },
     include: {
-      staff: { orderBy: { name: "asc" } },
+      staff: { where: { status: { not: "resigned" } }, orderBy: { name: "asc" } },
       stockItems: { orderBy: [{ category: "asc" }, { productName: "asc" }] },
       performances: { orderBy: [{ year: "desc" }, { month: "desc" }], take: 6 },
     },
