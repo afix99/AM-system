@@ -92,7 +92,10 @@ export function TasksClient({ initialTasks, stores }: { initialTasks: any[]; sto
   return (
     <div className="p-4 md:p-6 space-y-5 max-w-3xl mx-auto w-full">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-slate-900">Tasks</h1>
+        <div>
+          <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Manage</p>
+          <h1 className="text-2xl font-bold text-slate-900 mt-0.5">Tasks</h1>
+        </div>
         <Button size="sm" onClick={() => { setEditTask(null); setShowModal(true); }}>
           <Plus size={14} /> Add Task
         </Button>
@@ -102,7 +105,7 @@ export function TasksClient({ initialTasks, stores }: { initialTasks: any[]; sto
       <div className="flex gap-2 flex-wrap">
         {FILTERS.map((f) => (
           <button key={f} onClick={() => setFilter(f)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${filter === f ? "bg-slate-900 text-white" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
+            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${filter === f ? "bg-indigo-600 text-white shadow-sm shadow-indigo-600/20" : "bg-white border border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-700"}`}>
             {f}
           </button>
         ))}

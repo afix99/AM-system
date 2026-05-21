@@ -19,23 +19,23 @@ export function StoreDetailClient({ store }: { store: any }) {
   return (
     <div className="flex flex-col min-h-full">
       {/* Header */}
-      <div className="bg-white border-b border-slate-200 px-4 md:px-6 pt-4 pb-0">
-        <button onClick={() => router.back()} className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 mb-3">
-          <ArrowLeft size={16} /> Back
+      <div className="bg-white border-b border-slate-100 px-4 md:px-6 pt-4 pb-0">
+        <button onClick={() => router.back()} className="flex items-center gap-1.5 text-xs font-medium text-slate-400 hover:text-slate-700 mb-3 transition-colors">
+          <ArrowLeft size={14} /> Back
         </button>
-        <div className="mb-4">
-          <h1 className="text-xl font-bold text-slate-900">{store.name}</h1>
-          <p className="text-sm text-slate-500 mt-0.5">{store.location}</p>
+        <div className="mb-3">
+          <h1 className="text-xl font-bold text-slate-900 leading-tight">{store.name}</h1>
+          <p className="text-xs text-slate-400 mt-0.5">{store.location}</p>
         </div>
-        <div className="flex gap-0 overflow-x-auto">
+        <div className="flex overflow-x-auto -mx-0 scrollbar-none">
           {TABS.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+              className={`px-4 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 transition-all ${
                 activeTab === tab
-                  ? "border-slate-900 text-slate-900"
-                  : "border-transparent text-slate-500 hover:text-slate-700"
+                  ? "border-indigo-600 text-indigo-600"
+                  : "border-transparent text-slate-400 hover:text-slate-700 hover:border-slate-200"
               }`}
             >
               {tab}

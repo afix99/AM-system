@@ -15,33 +15,43 @@ const links = [
 export function Sidebar() {
   const pathname = usePathname();
   return (
-    <aside className="hidden md:flex flex-col w-56 bg-slate-900 text-white min-h-full shrink-0">
-      <div className="p-5 border-b border-slate-700">
-        <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Area Manager</p>
-        <p className="text-white font-bold text-lg leading-tight mt-0.5">Dashboard</p>
+    <aside className="hidden md:flex flex-col w-60 bg-slate-950 min-h-full shrink-0">
+      {/* Brand */}
+      <div className="h-16 flex items-center gap-3 px-5 border-b border-white/5">
+        <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shrink-0 shadow-lg shadow-indigo-900/40">
+          <span className="text-white text-xs font-bold tracking-tight">AM</span>
+        </div>
+        <div>
+          <p className="text-white font-semibold text-sm leading-none">Area Manager</p>
+          <p className="text-slate-500 text-xs mt-0.5 font-normal">Dashboard</p>
+        </div>
       </div>
-      <nav className="flex-1 p-3 space-y-0.5">
+
+      {/* Nav */}
+      <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
         {links.map(({ href, label, icon: Icon }) => {
           const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
           return (
             <Link
               key={href}
               href={href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                 active
-                  ? "bg-slate-700 text-white"
-                  : "text-slate-400 hover:text-white hover:bg-slate-800"
+                  ? "bg-indigo-600/15 text-indigo-400 ring-1 ring-inset ring-indigo-500/20"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-white/5"
               }`}
             >
-              <Icon size={18} />
+              <Icon size={17} className={active ? "text-indigo-400" : "text-slate-500"} />
               {label}
             </Link>
           );
         })}
       </nav>
-      <div className="p-4 border-t border-slate-700">
-        <p className="text-xs text-slate-500">Japanese Streetwear</p>
-        <p className="text-xs text-slate-500">Jersey Retail Co.</p>
+
+      {/* Footer */}
+      <div className="p-4 border-t border-white/5">
+        <p className="text-xs text-slate-600 font-medium">Japanese Streetwear</p>
+        <p className="text-xs text-slate-600">Jersey Retail Co.</p>
       </div>
     </aside>
   );

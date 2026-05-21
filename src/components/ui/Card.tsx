@@ -1,7 +1,11 @@
 import { cn } from "@/lib/utils";
 
 export function Card({ className, children }: { className?: string; children: React.ReactNode }) {
-  return <div className={cn("bg-white rounded-xl border border-slate-200 shadow-sm", className)}>{children}</div>;
+  return (
+    <div className={cn("bg-white rounded-2xl border border-slate-200/80 shadow-sm shadow-slate-200/60", className)}>
+      {children}
+    </div>
+  );
 }
 
 export function CardHeader({ className, children }: { className?: string; children: React.ReactNode }) {
@@ -9,7 +13,7 @@ export function CardHeader({ className, children }: { className?: string; childr
 }
 
 export function CardTitle({ className, children }: { className?: string; children: React.ReactNode }) {
-  return <h2 className={cn("font-semibold text-slate-900 text-base", className)}>{children}</h2>;
+  return <h2 className={cn("font-semibold text-slate-900 text-sm tracking-tight", className)}>{children}</h2>;
 }
 
 export function CardContent({ className, children }: { className?: string; children: React.ReactNode }) {
