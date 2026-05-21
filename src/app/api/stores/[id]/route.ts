@@ -16,7 +16,10 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const body = await req.json();
-  const store = await prisma.store.update({ where: { id }, data: body });
+  const { name, location, phone, managerName, targetMonthlySales } = await req.json();
+  const store = await prisma.store.update({
+    where: { id },
+    data: { name, location, phone, managerName, targetMonthlySales, updatedAt: new Date() },
+  });
   return NextResponse.json(store);
 }
