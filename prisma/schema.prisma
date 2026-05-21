@@ -17,13 +17,12 @@ model Store {
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
-  staff              Staff[]
-  schedules          Schedule[]
-  attendances        Attendance[]
-  performances       StorePerformance[]
-  stockItems         StockItem[]
-  tasks              Task[]
-  staffPerformances  StaffPerformance[]
+  staff             Staff[]
+  attendances       Attendance[]
+  performances      StorePerformance[]
+  stockItems        StockItem[]
+  tasks             Task[]
+  staffPerformances StaffPerformance[]
 }
 
 model Staff {
@@ -38,23 +37,8 @@ model Staff {
   updatedAt DateTime @updatedAt
 
   store             Store              @relation(fields: [storeId], references: [id])
-  schedules         Schedule[]
   attendances       Attendance[]
   staffPerformances StaffPerformance[]
-}
-
-model Schedule {
-  id        String   @id @default(cuid())
-  staffId   String
-  storeId   String
-  date      DateTime
-  shiftType String   @default("Morning")
-  notes     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  staff Staff @relation(fields: [staffId], references: [id])
-  store Store @relation(fields: [storeId], references: [id])
 }
 
 model Attendance {
@@ -101,18 +85,18 @@ model StaffPerformance {
 }
 
 model StockItem {
-  id            String   @id @default(cuid())
+  id            String    @id @default(cuid())
   storeId       String
   productName   String
   category      String
   size          String
   color         String
-  quantity      Int      @default(0)
-  minStockLevel Int      @default(5)
-  sellingPrice  Float    @default(0)
+  quantity      Int       @default(0)
+  minStockLevel Int       @default(5)
+  sellingPrice  Float     @default(0)
   lastRestocked DateTime?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   store Store @relation(fields: [storeId], references: [id])
 }

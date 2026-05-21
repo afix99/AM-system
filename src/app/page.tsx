@@ -9,11 +9,8 @@ export default async function HomePage() {
   today.setHours(0, 0, 0, 0);
   const weekDates = getWeekDates(today);
   const weekStart = weekDates[0];
-  const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
-  const nextWeekStart = new Date(weekStart); nextWeekStart.setDate(weekStart.getDate() + 7);
-  const nextWeekEnd = new Date(nextWeekStart); nextWeekEnd.setDate(nextWeekStart.getDate() + 6);
 
-  const [stores, tasks, checklist, nextWeekSchedules] = await Promise.all([
+  const [stores, tasks, checklist] = await Promise.all([
     prisma.store.findMany({
       where: { status: "active" },
       include: {
@@ -22,10 +19,6 @@ export default async function HomePage() {
         performances: {
           where: { month: today.getMonth() + 1, year: today.getFullYear() },
           take: 1,
-        },
-        schedules: {
-          where: { date: { gte: today, lt: tomorrow } },
-          include: { staff: true },
         },
       },
       orderBy: { name: "asc" },
@@ -38,15 +31,7 @@ export default async function HomePage() {
     prisma.weeklyChecklist.findFirst({
       where: { weekStartDate: { gte: weekStart, lt: new Date(weekStart.getTime() + 86400000) } },
     }),
-    prisma.schedule.findMany({
-      where: { date: { gte: nextWeekStart, lte: nextWeekEnd } },
-    }),
   ]);
-
-  const storesWithNextWeek = new Set(nextWeekSchedules.map((s) => s.storeId));
-  const storesMissingSchedule = stores
-    .filter((s) => !storesWithNextWeek.has(s.id))
-    .map((s) => ({ id: s.id, name: s.name }));
 
   return (
     <DashboardClient
@@ -54,7 +39,6 @@ export default async function HomePage() {
       tasks={JSON.parse(JSON.stringify(tasks))}
       checklist={checklist ? JSON.parse(JSON.stringify(checklist)) : null}
       weekStart={weekStart.toISOString()}
-      storesMissingSchedule={storesMissingSchedule}
       today={today.toISOString()}
     />
   );
