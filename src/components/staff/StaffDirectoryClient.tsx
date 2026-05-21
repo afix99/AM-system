@@ -97,11 +97,14 @@ export function StaffDirectoryClient({ staff: initialStaff, stores }: Props) {
     // animate out first
     await new Promise(r => setTimeout(r, 250));
     try {
-      await fetch(`/api/staff/${member.id}`, { method: "DELETE" });
+      const res = await fetch(`/api/staff/${member.id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error();
       setStaff(prev => prev.filter(s => s.id !== member.id));
       toast(`${member.name} removed`);
     } catch {
+      setRemovingId(null);
       toast("Failed to remove. Try again.");
+      return;
     } finally {
       setRemovingId(null);
     }
