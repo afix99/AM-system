@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Area Manager Dashboard System
 
-## Getting Started
+A clean, mobile-friendly dashboard for managing 5 Japanese streetwear jersey retail stores.
 
-First, run the development server:
+## Tech Stack
+
+- **Framework:** Next.js 14 (App Router)
+- **Database:** SQLite via Prisma ORM v7
+- **UI:** Tailwind CSS + custom components
+- **Charts:** Recharts
+- **Icons:** Lucide React
+- **Export:** xlsx
+
+## Features
+
+- **Dashboard** — Weekly checklist, task board, store snapshot
+- **Store Detail** — Overview, Staff, Schedule, Attendance, Stock, Performance tabs
+- **Schedule** — Master weekly view across all 5 stores with export
+- **Tasks** — Priority-sorted task manager (Urgent → Low)
+- **Stock** — All-stores stock overview with low-stock alerts
+- **Performance** — Monthly rankings, charts, staff ratings
+
+## Setup
 
 ```bash
+# 1. Install dependencies
+npm install
+
+# 2. Copy env file
+cp .env.example .env
+
+# 3. Push database schema
+npx prisma db push
+
+# 4. Seed with sample data
+npm run seed
+
+# 5. Start dev server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Seed Data
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- 5 stores: Sakura Store, Harajuku Hub, Shibuya Branch, Omotesando Outlet, Akihabara Point
+- 20 staff with Malaysian names (4 per store)
+- 3 weeks of schedule data
+- 2 weeks of attendance records
+- 3 months of performance data
+- 80 stock items (bomber jackets, track tops, varsity jackets, oversized tees)
+- 5 tasks including 1 overdue
+- Weekly checklist for current week
 
-## Learn More
+## Currency & Date Format
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Currency: `RM` prefix (e.g., RM 12,500)
+- Dates: `DD MMM YYYY` format

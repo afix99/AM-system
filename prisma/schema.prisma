@@ -1,0 +1,141 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Store {
+  id                 String   @id @default(cuid())
+  name               String
+  location           String
+  phone              String
+  managerName        String
+  targetMonthlySales Float    @default(0)
+  status             String   @default("active")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  staff              Staff[]
+  schedules          Schedule[]
+  attendances        Attendance[]
+  performances       StorePerformance[]
+  stockItems         StockItem[]
+  tasks              Task[]
+  staffPerformances  StaffPerformance[]
+}
+
+model Staff {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String
+  storeId   String
+  role      String   @default("Staff")
+  hireDate  DateTime
+  status    String   @default("active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  store             Store              @relation(fields: [storeId], references: [id])
+  schedules         Schedule[]
+  attendances       Attendance[]
+  staffPerformances StaffPerformance[]
+}
+
+model Schedule {
+  id        String   @id @default(cuid())
+  staffId   String
+  storeId   String
+  date      DateTime
+  shiftType String   @default("Morning")
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  staff Staff @relation(fields: [staffId], references: [id])
+  store Store @relation(fields: [storeId], references: [id])
+}
+
+model Attendance {
+  id        String   @id @default(cuid())
+  staffId   String
+  storeId   String
+  date      DateTime
+  status    String   @default("Present")
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  staff Staff @relation(fields: [staffId], references: [id])
+  store Store @relation(fields: [storeId], references: [id])
+}
+
+model StorePerformance {
+  id               String   @id @default(cuid())
+  storeId          String
+  month            Int
+  year             Int
+  totalSales       Float    @default(0)
+  targetSales      Float    @default(0)
+  areaManagerNotes String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  store Store @relation(fields: [storeId], references: [id])
+}
+
+model StaffPerformance {
+  id        String   @id @default(cuid())
+  staffId   String
+  storeId   String
+  month     Int
+  year      Int
+  rating    Int      @default(3)
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  staff Staff @relation(fields: [staffId], references: [id])
+  store Store @relation(fields: [storeId], references: [id])
+}
+
+model StockItem {
+  id            String   @id @default(cuid())
+  storeId       String
+  productName   String
+  category      String
+  size          String
+  color         String
+  quantity      Int      @default(0)
+  minStockLevel Int      @default(5)
+  sellingPrice  Float    @default(0)
+  lastRestocked DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  store Store @relation(fields: [storeId], references: [id])
+}
+
+model Task {
+  id        String    @id @default(cuid())
+  title     String
+  storeId   String?
+  priority  Int       @default(3)
+  status    String    @default("pending")
+  dueDate   DateTime?
+  notes     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  store Store? @relation(fields: [storeId], references: [id])
+}
+
+model WeeklyChecklist {
+  id             String   @id @default(cuid())
+  weekStartDate  DateTime
+  items          String   @default("[]")
+  completedItems String   @default("[]")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
