@@ -18,12 +18,16 @@ export function StoreDetailClient({ store }: { store: any }) {
   return (
     <div className="flex flex-col min-h-full">
       {/* Header */}
-      <div className="bg-white border-b border-slate-200 px-4 md:px-6 pt-4 pb-0">
-        <button onClick={() => router.back()} className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 mb-3">
+      <div className="border-b border-white/[0.06] px-4 md:px-6 pt-4 pb-0" style={{ background: "#060918" }}>
+        <button
+          onClick={() => router.back()}
+          className="flex items-center gap-1.5 text-sm text-slate-600 hover:text-slate-300 mb-3 transition-colors"
+        >
           <ArrowLeft size={16} /> Back
         </button>
         <div className="mb-4">
-          <h1 className="text-xl font-bold text-slate-900">{store.name}</h1>
+          <p className="text-xs font-medium text-indigo-400/70 uppercase tracking-widest mb-0.5">Store Detail</p>
+          <h1 className="text-xl font-bold text-slate-100">{store.name}</h1>
           <p className="text-sm text-slate-500 mt-0.5">{store.location}</p>
         </div>
         <div className="flex gap-0 overflow-x-auto">
@@ -31,10 +35,10 @@ export function StoreDetailClient({ store }: { store: any }) {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+              className={`px-4 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 transition-all ${
                 activeTab === tab
-                  ? "border-indigo-600 text-indigo-600"
-                  : "border-transparent text-slate-500 hover:text-slate-700"
+                  ? "border-indigo-500 text-indigo-400"
+                  : "border-transparent text-slate-600 hover:text-slate-300"
               }`}
             >
               {tab}

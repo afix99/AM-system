@@ -38,11 +38,11 @@ export function getPriorityLabel(priority: number): string {
 
 export function getPriorityColor(priority: number): string {
   switch (priority) {
-    case 1: return 'bg-red-100 text-red-800 border-red-200'
-    case 2: return 'bg-orange-100 text-orange-800 border-orange-200'
-    case 3: return 'bg-blue-100 text-blue-800 border-blue-200'
-    case 4: return 'bg-gray-100 text-gray-800 border-gray-200'
-    default: return 'bg-blue-100 text-blue-800 border-blue-200'
+    case 1: return 'bg-red-950/60 text-red-400 border-red-500/30'
+    case 2: return 'bg-orange-950/60 text-orange-400 border-orange-500/30'
+    case 3: return 'bg-blue-950/60 text-blue-400 border-blue-500/30'
+    case 4: return 'bg-white/[0.04] text-slate-500 border-white/[0.10]'
+    default: return 'bg-blue-950/60 text-blue-400 border-blue-500/30'
   }
 }
 

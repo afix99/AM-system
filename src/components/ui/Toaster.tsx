@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useState, useCallback, useEffect } from "react";
+import { createContext, useContext, useState, useCallback } from "react";
 import { CheckCircle, XCircle, X } from "lucide-react";
 
 type Toast = { id: string; message: string; type: "success" | "error" };
@@ -26,13 +26,20 @@ export function Toaster() {
         {toasts.map((t) => (
           <div
             key={t.id}
-            className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg text-white text-sm font-medium toast-enter pointer-events-auto ${
-              t.type === "success" ? "bg-green-600" : "bg-red-600"
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl border text-sm font-medium toast-enter pointer-events-auto backdrop-blur-sm ${
+              t.type === "success"
+                ? "bg-emerald-950/90 border-emerald-500/30 text-emerald-300"
+                : "bg-red-950/90 border-red-500/30 text-red-300"
             }`}
           >
-            {t.type === "success" ? <CheckCircle size={16} /> : <XCircle size={16} />}
+            {t.type === "success"
+              ? <CheckCircle size={16} className="text-emerald-400 shrink-0" />
+              : <XCircle size={16} className="text-red-400 shrink-0" />}
             <span className="flex-1">{t.message}</span>
-            <button onClick={() => setToasts((prev) => prev.filter((x) => x.id !== t.id))}>
+            <button
+              onClick={() => setToasts((prev) => prev.filter((x) => x.id !== t.id))}
+              className="text-current opacity-50 hover:opacity-100 transition-opacity"
+            >
               <X size={14} />
             </button>
           </div>

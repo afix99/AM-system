@@ -19,7 +19,6 @@ export function StoreOverviewTab({ store }: { store: any }) {
   const [notes, setNotes] = useState(currentPerf?.areaManagerNotes || "");
   const [saving, setSaving] = useState(false);
 
-  // Edit store info state
   const [editing, setEditing] = useState(false);
   const [editSaving, setEditSaving] = useState(false);
   const [name, setName] = useState(store.name);
@@ -68,7 +67,7 @@ export function StoreOverviewTab({ store }: { store: any }) {
       setEditing(false);
       router.refresh();
     } catch {
-      toast("Failed to save store info");
+      toast("Failed to save store info", "error");
     } finally {
       setEditSaving(false);
     }
@@ -83,6 +82,16 @@ export function StoreOverviewTab({ store }: { store: any }) {
     setEditing(false);
   };
 
+  const inputCls = "w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50";
+  const labelCls = "block text-xs font-medium text-slate-500 mb-1";
+
+  const achieveBarColor = achievement === null ? "#6366f1" :
+    achievement >= 100 ? "#10b981" :
+    achievement >= 80 ? "#f59e0b" : "#ef4444";
+  const achieveTextColor = achievement === null ? "text-slate-400" :
+    achievement >= 100 ? "text-emerald-400" :
+    achievement >= 80 ? "text-amber-400" : "text-red-400";
+
   return (
     <div className="space-y-4 max-w-2xl">
       <Card>
@@ -92,9 +101,9 @@ export function StoreOverviewTab({ store }: { store: any }) {
             {!editing && (
               <button
                 onClick={() => setEditing(true)}
-                className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700"
+                className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-300 transition-colors border border-white/[0.07] rounded-lg px-2 py-1"
               >
-                <Pencil size={14} /> Edit
+                <Pencil size={12} /> Edit
               </button>
             )}
           </div>
@@ -103,45 +112,24 @@ export function StoreOverviewTab({ store }: { store: any }) {
           {editing ? (
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Store Name</label>
-                <input
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-slate-400"
-                />
+                <label className={labelCls}>Store Name</label>
+                <input value={name} onChange={(e) => setName(e.target.value)} className={inputCls} />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Location</label>
-                <input
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-slate-400"
-                />
+                <label className={labelCls}>Location</label>
+                <input value={location} onChange={(e) => setLocation(e.target.value)} className={inputCls} />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Phone</label>
-                <input
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-slate-400"
-                />
+                <label className={labelCls}>Phone</label>
+                <input value={phone} onChange={(e) => setPhone(e.target.value)} className={inputCls} />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Manager Name</label>
-                <input
-                  value={managerName}
-                  onChange={(e) => setManagerName(e.target.value)}
-                  className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-slate-400"
-                />
+                <label className={labelCls}>Manager Name</label>
+                <input value={managerName} onChange={(e) => setManagerName(e.target.value)} className={inputCls} />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Monthly Sales Target (RM)</label>
-                <input
-                  type="number"
-                  value={targetSales}
-                  onChange={(e) => setTargetSales(e.target.value)}
-                  className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-slate-400"
-                />
+                <label className={labelCls}>Monthly Sales Target (RM)</label>
+                <input type="number" value={targetSales} onChange={(e) => setTargetSales(e.target.value)} className={inputCls} />
               </div>
               <div className="flex gap-2 pt-1">
                 <Button onClick={saveStoreInfo} disabled={editSaving} size="sm">
@@ -155,24 +143,30 @@ export function StoreOverviewTab({ store }: { store: any }) {
           ) : (
             <>
               <div className="flex items-start gap-3">
-                <MapPin size={16} className="text-slate-400 mt-0.5 shrink-0" />
+                <div className="w-8 h-8 rounded-lg bg-indigo-950/50 border border-indigo-500/20 flex items-center justify-center shrink-0">
+                  <MapPin size={14} className="text-indigo-400" />
+                </div>
                 <div>
-                  <p className="text-xs text-slate-400 font-medium uppercase tracking-wide">Location</p>
-                  <p className="text-sm text-slate-700">{store.location}</p>
+                  <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Location</p>
+                  <p className="text-sm text-slate-300 mt-0.5">{store.location}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <Phone size={16} className="text-slate-400 mt-0.5 shrink-0" />
+                <div className="w-8 h-8 rounded-lg bg-indigo-950/50 border border-indigo-500/20 flex items-center justify-center shrink-0">
+                  <Phone size={14} className="text-indigo-400" />
+                </div>
                 <div>
-                  <p className="text-xs text-slate-400 font-medium uppercase tracking-wide">Phone</p>
-                  <p className="text-sm text-slate-700">{store.phone}</p>
+                  <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Phone</p>
+                  <p className="text-sm text-slate-300 mt-0.5">{store.phone || "—"}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <User size={16} className="text-slate-400 mt-0.5 shrink-0" />
+                <div className="w-8 h-8 rounded-lg bg-indigo-950/50 border border-indigo-500/20 flex items-center justify-center shrink-0">
+                  <User size={14} className="text-indigo-400" />
+                </div>
                 <div>
-                  <p className="text-xs text-slate-400 font-medium uppercase tracking-wide">Manager</p>
-                  <p className="text-sm text-slate-700">{store.managerName}</p>
+                  <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Manager</p>
+                  <p className="text-sm text-slate-300 mt-0.5">{store.managerName || "—"}</p>
                 </div>
               </div>
             </>
@@ -185,41 +179,44 @@ export function StoreOverviewTab({ store }: { store: any }) {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Actual Sales (RM)</label>
+              <label className={labelCls}>Actual Sales (RM)</label>
               <input
                 type="number"
                 value={totalSales}
                 onChange={(e) => setTotalSales(e.target.value)}
                 placeholder="0"
-                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-slate-400"
+                className={inputCls}
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Target (RM)</label>
-              <p className="mt-2 text-sm font-medium text-slate-700">{formatCurrency(store.targetMonthlySales)}</p>
+              <label className={labelCls}>Target (RM)</label>
+              <p className="mt-2 text-sm font-semibold text-slate-300">{formatCurrency(store.targetMonthlySales)}</p>
             </div>
           </div>
+
           {achievement !== null && (
-            <div className="flex items-center gap-3">
-              <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs text-slate-500">Achievement</span>
+                <span className={`text-sm font-bold ${achieveTextColor}`}>{achievement}%</span>
+              </div>
+              <div className="h-2 bg-white/[0.06] rounded-full overflow-hidden">
                 <div
-                  className={`h-full rounded-full ${achievement >= 100 ? "bg-green-500" : achievement >= 80 ? "bg-yellow-500" : "bg-red-500"}`}
-                  style={{ width: `${Math.min(achievement, 100)}%` }}
+                  className="h-full rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min(achievement, 100)}%`, background: achieveBarColor }}
                 />
               </div>
-              <span className={`text-sm font-bold ${achievement >= 100 ? "text-green-600" : achievement >= 80 ? "text-yellow-600" : "text-red-600"}`}>
-                {achievement}%
-              </span>
             </div>
           )}
+
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1">Area Manager Notes</label>
+            <label className={labelCls}>Area Manager Notes</label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={3}
               placeholder="Add notes about this month's performance..."
-              className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-slate-400 resize-none"
+              className={`${inputCls} resize-none`}
             />
           </div>
           <Button onClick={saveSales} disabled={saving} size="sm">

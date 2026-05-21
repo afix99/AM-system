@@ -37,56 +37,57 @@ export function AddTaskModal({ stores, onClose, onSave, initialTask }: Props) {
     }
   };
 
+  const inputCls = "w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50";
+  const labelCls = "block text-sm font-medium text-slate-500 mb-1";
+
   return (
-    <div className="fixed inset-0 bg-black/40 z-50 flex items-end sm:items-center justify-center p-4">
-      <div className="bg-white rounded-xl w-full max-w-md shadow-xl">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
-          <h2 className="font-semibold text-slate-900">{initialTask ? "Edit Task" : "Add Task"}</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600"><X size={18} /></button>
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 backdrop-blur-sm" style={{ background: "rgba(0,0,0,0.6)" }}>
+      <div className="w-full max-w-md rounded-2xl border border-white/[0.08] overflow-hidden" style={{ background: "#0C1228" }}>
+        <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.06]">
+          <h2 className="font-semibold text-slate-200">{initialTask ? "Edit Task" : "Add Task"}</h2>
+          <button onClick={onClose} className="text-slate-600 hover:text-slate-400 transition-colors">
+            <X size={18} />
+          </button>
         </div>
         <div className="p-5 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Title *</label>
+            <label className={labelCls}>Title *</label>
             <input
               autoFocus
               type="text"
               value={title}
               onChange={(e) => { setTitle(e.target.value); setError(""); }}
-              className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-slate-400"
+              className={inputCls}
               placeholder="What needs to be done?"
             />
-            {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+            {error && <p className="text-red-400 text-xs mt-1">{error}</p>}
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Priority</label>
-              <select value={priority} onChange={(e) => setPriority(Number(e.target.value))}
-                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-slate-400">
-                <option value={1}>🔴 Urgent</option>
-                <option value={2}>🟠 High</option>
-                <option value={3}>🔵 Medium</option>
-                <option value={4}>⚪ Low</option>
+              <label className={labelCls}>Priority</label>
+              <select value={priority} onChange={(e) => setPriority(Number(e.target.value))} className={inputCls} style={{ colorScheme: "dark" }}>
+                <option value={1} style={{ background: "#0C1228" }}>🔴 Urgent</option>
+                <option value={2} style={{ background: "#0C1228" }}>🟠 High</option>
+                <option value={3} style={{ background: "#0C1228" }}>🔵 Medium</option>
+                <option value={4} style={{ background: "#0C1228" }}>⚪ Low</option>
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Due Date</label>
-              <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)}
-                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-slate-400" />
+              <label className={labelCls}>Due Date</label>
+              <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className={inputCls} style={{ colorScheme: "dark" }} />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Store</label>
-            <select value={storeId} onChange={(e) => setStoreId(e.target.value)}
-              className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-slate-400">
-              <option value="">All Stores</option>
-              {stores.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+            <label className={labelCls}>Store</label>
+            <select value={storeId} onChange={(e) => setStoreId(e.target.value)} className={inputCls} style={{ colorScheme: "dark" }}>
+              <option value="" style={{ background: "#0C1228" }}>All Stores</option>
+              {stores.map((s) => <option key={s.id} value={s.id} style={{ background: "#0C1228" }}>{s.name}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Notes</label>
+            <label className={labelCls}>Notes</label>
             <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2}
-              className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-slate-400 resize-none"
-              placeholder="Optional notes..." />
+              className={`${inputCls} resize-none`} placeholder="Optional notes..." />
           </div>
         </div>
         <div className="flex gap-2 px-5 pb-5">

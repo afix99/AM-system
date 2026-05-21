@@ -2,18 +2,18 @@ import { cn } from "@/lib/utils";
 
 export function Card({ className, children }: { className?: string; children: React.ReactNode }) {
   return (
-    <div className={cn("bg-white rounded-2xl border border-slate-200/80 shadow-sm shadow-slate-200/60", className)}>
+    <div className={cn("rounded-2xl border border-white/[0.07] bg-[#0C1228]", className)}>
       {children}
     </div>
   );
 }
 
 export function CardHeader({ className, children }: { className?: string; children: React.ReactNode }) {
-  return <div className={cn("px-5 py-4 border-b border-slate-100", className)}>{children}</div>;
+  return <div className={cn("px-5 py-4 border-b border-white/[0.07]", className)}>{children}</div>;
 }
 
 export function CardTitle({ className, children }: { className?: string; children: React.ReactNode }) {
-  return <h2 className={cn("font-semibold text-slate-900 text-sm tracking-tight", className)}>{children}</h2>;
+  return <h2 className={cn("font-semibold text-slate-200 text-sm tracking-tight", className)}>{children}</h2>;
 }
 
 export function CardContent({ className, children }: { className?: string; children: React.ReactNode }) {

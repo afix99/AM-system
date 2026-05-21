@@ -7,10 +7,13 @@ import { useToast } from "@/components/ui/Toaster";
 import { formatDate } from "@/lib/utils";
 
 const ROLE_COLORS: Record<string, string> = {
-  Manager: "bg-indigo-100 text-indigo-700",
-  "Senior Staff": "bg-sky-100 text-sky-700",
-  Staff: "bg-slate-100 text-slate-600",
+  Manager: "bg-indigo-950/60 text-indigo-300 border-indigo-500/30",
+  "Senior Staff": "bg-sky-950/60 text-sky-300 border-sky-500/30",
+  Staff: "bg-white/[0.05] text-slate-400 border-white/[0.10]",
 };
+
+const inputCls = "w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50";
+const labelCls = "block text-xs font-semibold text-slate-500 mb-1";
 
 function StaffForm({ storeId, initial, onSave, onCancel }: any) {
   const [name, setName] = useState(initial?.name || "");
@@ -40,32 +43,34 @@ function StaffForm({ storeId, initial, onSave, onCancel }: any) {
   };
 
   return (
-    <div className="border border-slate-200 rounded-xl p-4 space-y-3 bg-slate-50">
+    <div className="border border-white/[0.08] rounded-xl p-4 space-y-3 bg-white/[0.02]">
       <div className="grid grid-cols-2 gap-3">
         <div className="col-span-2">
-          <label className="block text-xs font-semibold text-slate-500 mb-1">Full Name *</label>
+          <label className={labelCls}>Full Name *</label>
           <input value={name} onChange={(e) => { setName(e.target.value); setError(""); }}
-            className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-400 bg-white" placeholder="Name" />
+            className={inputCls} placeholder="Name" />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-500 mb-1">Phone</label>
+          <label className={labelCls}>Phone</label>
           <input value={phone} onChange={(e) => setPhone(e.target.value)}
-            className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-400 bg-white" placeholder="01x-xxx xxxx" />
+            className={inputCls} placeholder="01x-xxx xxxx" />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-500 mb-1">Role</label>
+          <label className={labelCls}>Role</label>
           <select value={role} onChange={(e) => setRole(e.target.value)}
-            className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-400 bg-white">
-            <option>Manager</option><option>Senior Staff</option><option>Staff</option>
+            className={`${inputCls} appearance-none`}>
+            <option style={{ background: "#0C1228" }}>Manager</option>
+            <option style={{ background: "#0C1228" }}>Senior Staff</option>
+            <option style={{ background: "#0C1228" }}>Staff</option>
           </select>
         </div>
         <div className="col-span-2">
-          <label className="block text-xs font-semibold text-slate-500 mb-1">Hire Date *</label>
+          <label className={labelCls}>Hire Date *</label>
           <input type="date" value={hireDate} onChange={(e) => { setHireDate(e.target.value); setError(""); }}
-            className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-400 bg-white" />
+            className={inputCls} />
         </div>
       </div>
-      {error && <p className="text-red-500 text-xs">{error}</p>}
+      {error && <p className="text-red-400 text-xs">{error}</p>}
       <div className="flex gap-2">
         <Button size="sm" onClick={save} disabled={saving}>{saving ? "Saving…" : initial ? "Save Changes" : "Add Staff"}</Button>
         <Button size="sm" variant="ghost" onClick={onCancel}>Cancel</Button>
@@ -91,7 +96,7 @@ export function StoreStaffTab({ store }: { store: any }) {
       toast(`${name} removed`);
     } catch {
       setRemovingId(null);
-      toast("Failed to remove. Try again.");
+      toast("Failed to remove. Try again.", "error");
     } finally {
       setRemovingId(null);
     }
@@ -100,7 +105,7 @@ export function StoreStaffTab({ store }: { store: any }) {
   return (
     <div className="space-y-4 max-w-2xl">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-slate-500">{staff.length} staff</p>
+        <p className="text-sm text-slate-500">{staff.length} staff members</p>
         <Button size="sm" onClick={() => { setShowAdd(true); setEditId(null); }}>
           <Plus size={14} /> Add Staff
         </Button>
@@ -117,9 +122,9 @@ export function StoreStaffTab({ store }: { store: any }) {
       <Card>
         <CardContent className="p-0">
           {staff.length === 0 ? (
-            <p className="py-8 text-center text-slate-400 text-sm">No staff yet.</p>
+            <p className="py-8 text-center text-slate-600 text-sm">No staff yet.</p>
           ) : (
-            <ul className="divide-y divide-slate-100">
+            <ul className="divide-y divide-white/[0.04]">
               {staff.map((s: any) => (
                 <li key={s.id} className={`transition-all duration-200 ${removingId === s.id ? "opacity-0 -translate-x-2" : "opacity-100"}`}>
                   {editId === s.id ? (
@@ -136,22 +141,30 @@ export function StoreStaffTab({ store }: { store: any }) {
                       />
                     </div>
                   ) : (
-                    <div className="flex items-center gap-3 px-4 py-3">
+                    <div className="flex items-center gap-3 px-4 py-3 hover:bg-white/[0.02] transition-colors">
+                      <div className="w-9 h-9 rounded-xl bg-indigo-950/40 border border-indigo-500/20 flex items-center justify-center shrink-0">
+                        <span className="text-xs font-bold text-indigo-400">
+                          {s.name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
+                        </span>
+                      </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-sm font-semibold text-slate-900">{s.name}</span>
-                          <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${ROLE_COLORS[s.role] ?? "bg-slate-100 text-slate-600"}`}>{s.role}</span>
+                          <span className="text-sm font-semibold text-slate-200">{s.name}</span>
+                          <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${ROLE_COLORS[s.role] ?? "bg-white/[0.05] text-slate-400 border-white/[0.10]"}`}>{s.role}</span>
                         </div>
-                        <p className="text-xs text-slate-400 mt-0.5">{s.phone} · Hired {formatDate(s.hireDate)}</p>
+                        <p className="text-xs text-slate-600 mt-0.5">{s.phone || "—"} · Hired {formatDate(s.hireDate)}</p>
                       </div>
                       <div className="flex gap-1">
-                        <button onClick={() => setEditId(s.id)} className="p-1.5 text-slate-300 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition-colors">
+                        <button
+                          onClick={() => setEditId(s.id)}
+                          className="p-1.5 text-slate-600 hover:text-slate-300 rounded-lg hover:bg-white/[0.06] transition-colors"
+                        >
                           <Pencil size={14} />
                         </button>
                         <button
                           onClick={() => removeStaff(s.id, s.name)}
                           disabled={removingId === s.id}
-                          className="p-1.5 text-slate-300 hover:text-red-500 rounded-lg hover:bg-red-50 transition-colors"
+                          className="p-1.5 text-slate-600 hover:text-red-400 rounded-lg hover:bg-red-950/40 transition-colors"
                         >
                           <X size={14} />
                         </button>

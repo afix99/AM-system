@@ -34,7 +34,6 @@ export function StorePerformanceTab({ store }: { store: any }) {
     for (const sp of data.staffPerf || []) rMap[sp.staffId] = sp.rating;
     setRatings(rMap);
 
-    // Build chart: last 3 months from performances
     const last3 = store.performances?.slice(0, 3).map((p: any) => ({
       name: `${MONTHS[p.month - 1]} ${p.year}`,
       sales: p.totalSales,
@@ -71,13 +70,39 @@ export function StorePerformanceTab({ store }: { store: any }) {
     ? Math.round((perf.totalSales / store.targetMonthlySales) * 100)
     : null;
 
+  const achieveBarColor = achievement === null ? "#6366f1" :
+    achievement >= 100 ? "#10b981" :
+    achievement >= 80 ? "#f59e0b" : "#ef4444";
+  const achieveTextColor = achievement === null ? "text-slate-400" :
+    achievement >= 100 ? "text-emerald-400" :
+    achievement >= 80 ? "text-amber-400" : "text-red-400";
+
+  const inputCls = "w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50";
+
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (!active || !payload?.length) return null;
+    return (
+      <div className="rounded-xl border border-white/[0.10] p-2.5 text-xs" style={{ background: "#0C1228" }}>
+        {payload.map((p: any) => (
+          <p key={p.dataKey} style={{ color: p.color }}>
+            {p.name}: RM {Number(p.value).toLocaleString()}
+          </p>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-4 max-w-2xl">
       {/* Month picker */}
       <div className="flex items-center gap-2">
-        <button onClick={() => changeMonth(-1)} className="p-1.5 rounded hover:bg-slate-100 text-slate-600"><ChevronLeft size={18} /></button>
-        <span className="text-sm font-medium text-slate-700 min-w-[120px] text-center">{MONTHS[month - 1]} {year}</span>
-        <button onClick={() => changeMonth(1)} className="p-1.5 rounded hover:bg-slate-100 text-slate-600"><ChevronRight size={18} /></button>
+        <button onClick={() => changeMonth(-1)} className="p-1.5 rounded-lg hover:bg-white/[0.06] text-slate-500 hover:text-slate-300 border border-white/[0.07] transition-colors">
+          <ChevronLeft size={16} />
+        </button>
+        <span className="text-sm font-semibold text-slate-200 min-w-[120px] text-center">{MONTHS[month - 1]} {year}</span>
+        <button onClick={() => changeMonth(1)} className="p-1.5 rounded-lg hover:bg-white/[0.06] text-slate-500 hover:text-slate-300 border border-white/[0.07] transition-colors">
+          <ChevronRight size={16} />
+        </button>
       </div>
 
       {/* Sales entry */}
@@ -87,29 +112,28 @@ export function StorePerformanceTab({ store }: { store: any }) {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Actual Sales (RM)</label>
-              <input type="number" value={totalSales} onChange={(e) => setTotalSales(e.target.value)} placeholder="0"
-                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-slate-400" />
+              <input type="number" value={totalSales} onChange={(e) => setTotalSales(e.target.value)} placeholder="0" className={inputCls} />
             </div>
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Target (RM)</label>
-              <p className="text-sm font-medium text-slate-700 mt-2">{formatCurrency(store.targetMonthlySales)}</p>
+              <p className="text-sm font-semibold text-slate-300 mt-2">{formatCurrency(store.targetMonthlySales)}</p>
             </div>
           </div>
           {achievement !== null && (
-            <div className="flex items-center gap-3">
-              <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-                <div className={`h-full rounded-full ${achievement >= 100 ? "bg-green-500" : achievement >= 80 ? "bg-yellow-500" : "bg-red-500"}`}
-                  style={{ width: `${Math.min(achievement, 100)}%` }} />
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs text-slate-500">Achievement</span>
+                <span className={`text-sm font-bold ${achieveTextColor}`}>{achievement}%</span>
               </div>
-              <span className={`text-sm font-bold ${achievement >= 100 ? "text-green-600" : achievement >= 80 ? "text-yellow-600" : "text-red-600"}`}>
-                {achievement}%
-              </span>
+              <div className="h-2 bg-white/[0.06] rounded-full overflow-hidden">
+                <div className="h-full rounded-full transition-all duration-500" style={{ width: `${Math.min(achievement, 100)}%`, background: achieveBarColor }} />
+              </div>
             </div>
           )}
           <div>
             <label className="block text-xs font-medium text-slate-500 mb-1">Notes</label>
             <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} placeholder="Area manager notes..."
-              className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-slate-400 resize-none" />
+              className={`${inputCls} resize-none`} />
           </div>
         </CardContent>
       </Card>
@@ -121,21 +145,21 @@ export function StorePerformanceTab({ store }: { store: any }) {
           <CardContent>
             <ResponsiveContainer width="100%" height={160}>
               <BarChart data={chartData} barGap={4}>
-                <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} />
-                <Tooltip formatter={(v) => `RM ${Number(v).toLocaleString()}`} />
-                <Bar dataKey="sales" radius={[4,4,0,0]} fill="#334155">
+                <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: "#64748b" }} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} axisLine={false} tickLine={false} />
+                <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(255,255,255,0.03)" }} />
+                <Bar dataKey="sales" name="Actual" radius={[4,4,0,0]}>
                   {chartData.map((entry, i) => (
-                    <Cell key={i} fill={entry.sales >= entry.target ? "#16a34a" : "#e11d48"} />
+                    <Cell key={i} fill={entry.sales >= entry.target ? "#10b981" : "#ef4444"} />
                   ))}
                 </Bar>
-                <Bar dataKey="target" radius={[4,4,0,0]} fill="#e2e8f0" />
+                <Bar dataKey="target" name="Target" radius={[4,4,0,0]} fill="rgba(255,255,255,0.07)" />
               </BarChart>
             </ResponsiveContainer>
-            <div className="flex items-center gap-4 mt-2 justify-center text-xs text-slate-400">
-              <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-green-600 inline-block" />Actual (met)</span>
-              <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-red-600 inline-block" />Actual (missed)</span>
-              <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-slate-200 inline-block" />Target</span>
+            <div className="flex items-center gap-4 mt-2 justify-center text-xs text-slate-600">
+              <span className="flex items-center gap-1"><span className="w-2 h-2 rounded bg-emerald-500 inline-block" />Met target</span>
+              <span className="flex items-center gap-1"><span className="w-2 h-2 rounded bg-red-500 inline-block" />Missed</span>
+              <span className="flex items-center gap-1"><span className="w-2 h-2 rounded inline-block" style={{ background: "rgba(255,255,255,0.10)" }} />Target</span>
             </div>
           </CardContent>
         </Card>
@@ -146,21 +170,24 @@ export function StorePerformanceTab({ store }: { store: any }) {
         <CardHeader><CardTitle>Staff Ratings</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           {store.staff.filter((s: any) => s.status === "active").map((staff: any) => (
-            <div key={staff.id} className="flex items-center justify-between">
+            <div key={staff.id} className="flex items-center justify-between py-2 border-b border-white/[0.04] last:border-0">
               <div>
-                <p className="text-sm font-medium text-slate-900">{staff.name}</p>
-                <p className="text-xs text-slate-400">{staff.role}</p>
+                <p className="text-sm font-medium text-slate-200">{staff.name}</p>
+                <p className="text-xs text-slate-600">{staff.role}</p>
               </div>
-              <div className="flex gap-1">
+              <div className="flex gap-0.5">
                 {[1,2,3,4,5].map((star) => (
                   <button key={star} onClick={() => setRatings((prev) => ({ ...prev, [staff.id]: star }))}
-                    className={`text-xl transition-colors ${(ratings[staff.id] || 0) >= star ? "text-yellow-400" : "text-slate-200 hover:text-yellow-300"}`}>
+                    className={`text-xl leading-none transition-colors ${(ratings[staff.id] || 0) >= star ? "text-yellow-400" : "text-white/[0.07] hover:text-yellow-300"}`}>
                     ★
                   </button>
                 ))}
               </div>
             </div>
           ))}
+          {store.staff.filter((s: any) => s.status === "active").length === 0 && (
+            <p className="text-sm text-slate-600">No active staff.</p>
+          )}
         </CardContent>
       </Card>
 
