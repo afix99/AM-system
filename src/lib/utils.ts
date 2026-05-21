@@ -48,11 +48,25 @@ export function getPriorityColor(priority: number): string {
 
 export function getShiftColor(shift: string): string {
   switch (shift) {
-    case 'Morning': return 'bg-yellow-100 text-yellow-800'
-    case 'Afternoon': return 'bg-blue-100 text-blue-800'
-    case 'Closing': return 'bg-purple-100 text-purple-800'
-    case 'Off': return 'bg-gray-100 text-gray-500'
-    default: return 'bg-gray-100 text-gray-500'
+    case 'M':  return 'bg-sky-100 text-sky-800'
+    case 'N':  return 'bg-indigo-100 text-indigo-800'
+    case 'H':  return 'bg-amber-100 text-amber-800'
+    case 'HM': return 'bg-cyan-100 text-cyan-800'
+    case 'HN': return 'bg-violet-100 text-violet-800'
+    case 'Off': return 'bg-slate-100 text-slate-400'
+    default:   return 'bg-slate-100 text-slate-400'
+  }
+}
+
+export function getShiftLabel(shift: string): string {
+  switch (shift) {
+    case 'M':  return 'M  9:30AM–6:30PM'
+    case 'N':  return 'N  1PM–10PM'
+    case 'H':  return 'H  5PM–10PM'
+    case 'HM': return 'HM 9:30AM–2:30PM'
+    case 'HN': return 'HN 5PM–10PM'
+    case 'Off': return 'Off'
+    default:   return shift || '—'
   }
 }
 

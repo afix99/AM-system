@@ -74,10 +74,10 @@ export async function GET() {
     const dow = today.getDay();
     const thisMonday = new Date(today); thisMonday.setDate(today.getDate() - dow + (dow === 0 ? -6 : 1));
     const patterns = [
-      ["Morning","Afternoon","Closing","Off","Morning","Afternoon","Off"],
-      ["Afternoon","Closing","Morning","Morning","Off","Afternoon","Closing"],
-      ["Closing","Morning","Off","Afternoon","Closing","Morning","Morning"],
-      ["Off","Morning","Afternoon","Closing","Morning","Off","Afternoon"],
+      ["M","N","HM","Off","M","N","Off"],
+      ["N","HN","M","M","Off","N","HN"],
+      ["HM","M","Off","N","HN","M","M"],
+      ["Off","M","N","HN","M","Off","N"],
     ];
     for (let wo = -1; wo <= 1; wo++) {
       for (const staff of createdStaff) {

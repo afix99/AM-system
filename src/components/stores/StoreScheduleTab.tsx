@@ -3,9 +3,17 @@ import { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight, Copy, Save } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toaster";
-import { getWeekDates, getWeekLabel, getShiftColor } from "@/lib/utils";
+import { getWeekDates, getWeekLabel, getShiftColor, getShiftLabel } from "@/lib/utils";
 
-const SHIFTS = ["Morning", "Afternoon", "Closing", "Off"] as const;
+const SHIFTS = ["M", "N", "H", "HM", "HN", "Off"] as const;
+const SHIFT_DESCRIPTIONS: Record<string, string> = {
+  M:   "Morning  9:30AM – 6:30PM",
+  N:   "Noon     1PM – 10PM",
+  H:   "Half     5PM – 10PM",
+  HM:  "Half Morning  9:30AM – 2:30PM",
+  HN:  "Half Noon     5PM – 10PM",
+  Off: "Off / Rest",
+};
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 export function StoreScheduleTab({ store }: { store: any }) {
@@ -109,6 +117,21 @@ export function StoreScheduleTab({ store }: { store: any }) {
         </div>
       </div>
 
+      {/* Shift legend */}
+      <div className="flex flex-wrap gap-2">
+        {SHIFTS.filter(s => s !== 'Off').map((s) => (
+          <span key={s} className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${getShiftColor(s)}`}>
+            <span className="font-bold">{s}</span>
+            <span className="font-normal opacity-75">
+              {s === 'M' ? '9:30AM–6:30PM' : s === 'N' ? '1PM–10PM' : s === 'H' ? '5PM–10PM' : s === 'HM' ? '9:30AM–2:30PM' : '5PM–10PM'}
+            </span>
+          </span>
+        ))}
+        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${getShiftColor('Off')}`}>
+          Off
+        </span>
+      </div>
+
       {/* Schedule grid */}
       {loading ? (
         <div className="py-10 text-center text-slate-400 text-sm">Loading...</div>
@@ -142,8 +165,10 @@ export function StoreScheduleTab({ store }: { store: any }) {
                           onChange={(e) => setShift(staff.id, date, e.target.value)}
                           className={`w-full text-xs px-1 py-1.5 rounded border-0 cursor-pointer focus:outline-none focus:ring-1 focus:ring-slate-300 ${shift ? getShiftColor(shift) : "bg-white text-slate-400"}`}
                         >
-                          <option value="">-</option>
-                          {SHIFTS.map((s) => <option key={s} value={s}>{s}</option>)}
+                          <option value="">—</option>
+                          {SHIFTS.map((s) => (
+                            <option key={s} value={s}>{s}</option>
+                          ))}
                         </select>
                       </td>
                     );

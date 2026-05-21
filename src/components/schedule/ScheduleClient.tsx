@@ -148,7 +148,7 @@ export function ScheduleClient({ stores }: { stores: any[] }) {
                                 <td key={i} className="px-1.5 py-2 border-b border-slate-50 text-center">
                                   {shift ? (
                                     <span className={`inline-block px-1.5 py-0.5 rounded text-xs font-medium ${getShiftColor(shift)}`}>
-                                      {shift === "Morning" ? "AM" : shift === "Afternoon" ? "PM" : shift === "Closing" ? "CL" : "OFF"}
+                                      {shift}
                                     </span>
                                   ) : (
                                     <span className="text-slate-300 text-xs">–</span>

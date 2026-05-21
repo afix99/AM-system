@@ -43,11 +43,15 @@ function normalizeShift(raw: any): string {
   const s = String(raw).trim().toUpperCase();
   if (!s) return "Off";
   if (s.startsWith("OFF")) return "Off";
-  if (s === "M" || s === "HM" || s.startsWith("HM ") || s.includes("9:30")) return "Morning";
-  if (s === "H") return "Morning";
-  if (s === "FULL") return "Morning";
-  if (s === "N" || s === "HN" || s.startsWith("HN ") || s.includes("3:30 - 10") || s.includes("3:30-10")) return "Closing";
-  if (s === "PM" || s === "A") return "Afternoon";
+  // Half Noon variants — check before HM and N
+  if (s === "HN" || s.startsWith("HN ") || s.startsWith("HN(") || s.includes("3:30 - 10") || s.includes("3:30-10")) return "HN";
+  // Half Morning variants
+  if (s === "HM" || s.startsWith("HM ") || s.startsWith("HM(") || s.includes("9:30 - 3:30") || s.includes("9:30-3:30")) return "HM";
+  // Pure codes
+  if (s === "M" || s.includes("9:30 AM - 6:30") || s.includes("9:30AM-6:30")) return "M";
+  if (s === "N" || s.includes("1PM") || s.includes("1 PM")) return "N";
+  if (s === "H" || s.includes("5PM - 10") || s.includes("5PM-10")) return "H";
+  if (s === "FULL") return "M"; // full day = Morning shift
   return "Off";
 }
 
@@ -193,9 +197,11 @@ export function ImportModal({ stores, onClose, onSuccess }: Props) {
 
   const shiftBadge = (type: string) => {
     const map: Record<string, string> = {
-      Morning: "bg-sky-100 text-sky-700",
-      Afternoon: "bg-amber-100 text-amber-700",
-      Closing: "bg-violet-100 text-violet-700",
+      M:   "bg-sky-100 text-sky-800",
+      N:   "bg-indigo-100 text-indigo-800",
+      H:   "bg-amber-100 text-amber-800",
+      HM:  "bg-cyan-100 text-cyan-800",
+      HN:  "bg-violet-100 text-violet-800",
       Off: "bg-slate-100 text-slate-400",
     };
     return map[type] ?? "bg-slate-100 text-slate-500";
@@ -355,7 +361,7 @@ export function ImportModal({ stores, onClose, onSuccess }: Props) {
                           .filter(([, v]) => v > 0)
                           .map(([type, count]) => (
                             <span key={type} className={`text-xs px-2 py-0.5 rounded-full font-medium ${shiftBadge(type)}`}>
-                              {type === "Morning" ? "AM" : type === "Afternoon" ? "PM" : type === "Closing" ? "CL" : "Off"} ×{count}
+                              {type} ×{count}
                             </span>
                           ))}
                       </div>
