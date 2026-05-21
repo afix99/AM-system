@@ -5,7 +5,7 @@
   "scripts": {
     "postinstall": "prisma generate",
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma db push && next build",
     "start": "next start",
     "lint": "eslint",
     "seed": "npx ts-node --project tsconfig.seed.json prisma/seed.ts"
