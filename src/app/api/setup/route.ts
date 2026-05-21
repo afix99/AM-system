@@ -1,34 +1,38 @@
 import { prisma } from "@/lib/prisma";
+import { createClient } from "@libsql/client";
 import { NextResponse } from "next/server";
 
 export async function GET() {
+  const url = process.env.TURSO_DATABASE_URL;
+  const authToken = process.env.TURSO_AUTH_TOKEN;
+
+  if (!url) {
+    return NextResponse.json({ error: "TURSO_DATABASE_URL is not set" }, { status: 500 });
+  }
+
   try {
-    // Step 1: Create all tables
-    await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS "Store" ("id" TEXT NOT NULL PRIMARY KEY, "name" TEXT NOT NULL, "location" TEXT NOT NULL, "phone" TEXT NOT NULL, "managerName" TEXT NOT NULL, "targetMonthlySales" REAL NOT NULL DEFAULT 0, "status" TEXT NOT NULL DEFAULT 'active', "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)`;
+    // Use libsql client directly to create tables (DDL)
+    const db = createClient({ url, authToken });
 
-    await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS "Staff" ("id" TEXT NOT NULL PRIMARY KEY, "name" TEXT NOT NULL, "phone" TEXT NOT NULL, "storeId" TEXT NOT NULL, "role" TEXT NOT NULL DEFAULT 'Staff', "hireDate" DATETIME NOT NULL, "status" TEXT NOT NULL DEFAULT 'active', "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY ("storeId") REFERENCES "Store" ("id"))`;
+    await db.batch([
+      `CREATE TABLE IF NOT EXISTS "Store" ("id" TEXT NOT NULL PRIMARY KEY, "name" TEXT NOT NULL, "location" TEXT NOT NULL, "phone" TEXT NOT NULL, "managerName" TEXT NOT NULL, "targetMonthlySales" REAL NOT NULL DEFAULT 0, "status" TEXT NOT NULL DEFAULT 'active', "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)`,
+      `CREATE TABLE IF NOT EXISTS "Staff" ("id" TEXT NOT NULL PRIMARY KEY, "name" TEXT NOT NULL, "phone" TEXT NOT NULL, "storeId" TEXT NOT NULL, "role" TEXT NOT NULL DEFAULT 'Staff', "hireDate" DATETIME NOT NULL, "status" TEXT NOT NULL DEFAULT 'active', "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)`,
+      `CREATE TABLE IF NOT EXISTS "Schedule" ("id" TEXT NOT NULL PRIMARY KEY, "staffId" TEXT NOT NULL, "storeId" TEXT NOT NULL, "date" DATETIME NOT NULL, "shiftType" TEXT NOT NULL DEFAULT 'Morning', "notes" TEXT, "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)`,
+      `CREATE TABLE IF NOT EXISTS "Attendance" ("id" TEXT NOT NULL PRIMARY KEY, "staffId" TEXT NOT NULL, "storeId" TEXT NOT NULL, "date" DATETIME NOT NULL, "status" TEXT NOT NULL DEFAULT 'Present', "notes" TEXT, "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)`,
+      `CREATE TABLE IF NOT EXISTS "StorePerformance" ("id" TEXT NOT NULL PRIMARY KEY, "storeId" TEXT NOT NULL, "month" INTEGER NOT NULL, "year" INTEGER NOT NULL, "totalSales" REAL NOT NULL DEFAULT 0, "targetSales" REAL NOT NULL DEFAULT 0, "areaManagerNotes" TEXT, "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)`,
+      `CREATE TABLE IF NOT EXISTS "StaffPerformance" ("id" TEXT NOT NULL PRIMARY KEY, "staffId" TEXT NOT NULL, "storeId" TEXT NOT NULL, "month" INTEGER NOT NULL, "year" INTEGER NOT NULL, "rating" INTEGER NOT NULL DEFAULT 3, "notes" TEXT, "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)`,
+      `CREATE TABLE IF NOT EXISTS "StockItem" ("id" TEXT NOT NULL PRIMARY KEY, "storeId" TEXT NOT NULL, "productName" TEXT NOT NULL, "category" TEXT NOT NULL, "size" TEXT NOT NULL, "color" TEXT NOT NULL, "quantity" INTEGER NOT NULL DEFAULT 0, "minStockLevel" INTEGER NOT NULL DEFAULT 5, "sellingPrice" REAL NOT NULL DEFAULT 0, "lastRestocked" DATETIME, "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)`,
+      `CREATE TABLE IF NOT EXISTS "Task" ("id" TEXT NOT NULL PRIMARY KEY, "title" TEXT NOT NULL, "storeId" TEXT, "priority" INTEGER NOT NULL DEFAULT 3, "status" TEXT NOT NULL DEFAULT 'pending', "dueDate" DATETIME, "notes" TEXT, "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)`,
+      `CREATE TABLE IF NOT EXISTS "WeeklyChecklist" ("id" TEXT NOT NULL PRIMARY KEY, "weekStartDate" DATETIME NOT NULL, "items" TEXT NOT NULL DEFAULT '[]', "completedItems" TEXT NOT NULL DEFAULT '[]', "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)`,
+    ], "write");
 
-    await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS "Schedule" ("id" TEXT NOT NULL PRIMARY KEY, "staffId" TEXT NOT NULL, "storeId" TEXT NOT NULL, "date" DATETIME NOT NULL, "shiftType" TEXT NOT NULL DEFAULT 'Morning', "notes" TEXT, "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY ("staffId") REFERENCES "Staff" ("id"), FOREIGN KEY ("storeId") REFERENCES "Store" ("id"))`;
-
-    await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS "Attendance" ("id" TEXT NOT NULL PRIMARY KEY, "staffId" TEXT NOT NULL, "storeId" TEXT NOT NULL, "date" DATETIME NOT NULL, "status" TEXT NOT NULL DEFAULT 'Present', "notes" TEXT, "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY ("staffId") REFERENCES "Staff" ("id"), FOREIGN KEY ("storeId") REFERENCES "Store" ("id"))`;
-
-    await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS "StorePerformance" ("id" TEXT NOT NULL PRIMARY KEY, "storeId" TEXT NOT NULL, "month" INTEGER NOT NULL, "year" INTEGER NOT NULL, "totalSales" REAL NOT NULL DEFAULT 0, "targetSales" REAL NOT NULL DEFAULT 0, "areaManagerNotes" TEXT, "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY ("storeId") REFERENCES "Store" ("id"))`;
-
-    await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS "StaffPerformance" ("id" TEXT NOT NULL PRIMARY KEY, "staffId" TEXT NOT NULL, "storeId" TEXT NOT NULL, "month" INTEGER NOT NULL, "year" INTEGER NOT NULL, "rating" INTEGER NOT NULL DEFAULT 3, "notes" TEXT, "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY ("staffId") REFERENCES "Staff" ("id"), FOREIGN KEY ("storeId") REFERENCES "Store" ("id"))`;
-
-    await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS "StockItem" ("id" TEXT NOT NULL PRIMARY KEY, "storeId" TEXT NOT NULL, "productName" TEXT NOT NULL, "category" TEXT NOT NULL, "size" TEXT NOT NULL, "color" TEXT NOT NULL, "quantity" INTEGER NOT NULL DEFAULT 0, "minStockLevel" INTEGER NOT NULL DEFAULT 5, "sellingPrice" REAL NOT NULL DEFAULT 0, "lastRestocked" DATETIME, "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY ("storeId") REFERENCES "Store" ("id"))`;
-
-    await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS "Task" ("id" TEXT NOT NULL PRIMARY KEY, "title" TEXT NOT NULL, "storeId" TEXT, "priority" INTEGER NOT NULL DEFAULT 3, "status" TEXT NOT NULL DEFAULT 'pending', "dueDate" DATETIME, "notes" TEXT, "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY ("storeId") REFERENCES "Store" ("id"))`;
-
-    await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS "WeeklyChecklist" ("id" TEXT NOT NULL PRIMARY KEY, "weekStartDate" DATETIME NOT NULL, "items" TEXT NOT NULL DEFAULT '[]', "completedItems" TEXT NOT NULL DEFAULT '[]', "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)`;
-
-    // Step 2: Check if already seeded
+    // Check if already seeded
     const storeCount = await prisma.store.count();
     if (storeCount > 0) {
-      return NextResponse.json({ message: `Already set up. ${storeCount} stores found. App is ready!` });
+      return NextResponse.json({ message: `Already set up — ${storeCount} stores found. App is ready!` });
     }
 
-    // Step 3: Seed data
+    // Seed stores
     const stores = await Promise.all([
       prisma.store.create({ data: { id: crypto.randomUUID(), name: "Sakura Store", location: "Lot 12, Pavilion KL, Bukit Bintang, Kuala Lumpur", phone: "03-2141 8800", managerName: "Ahmad Faris", targetMonthlySales: 85000, status: "active", updatedAt: new Date() } }),
       prisma.store.create({ data: { id: crypto.randomUUID(), name: "Harajuku Hub", location: "G-07, Mid Valley Megamall, Kuala Lumpur", phone: "03-2282 3300", managerName: "Nurul Izzati", targetMonthlySales: 75000, status: "active", updatedAt: new Date() } }),
@@ -75,7 +79,6 @@ export async function GET() {
       ["Closing","Morning","Off","Afternoon","Closing","Morning","Morning"],
       ["Off","Morning","Afternoon","Closing","Morning","Off","Afternoon"],
     ];
-
     for (let wo = -1; wo <= 1; wo++) {
       for (const staff of createdStaff) {
         const pi = createdStaff.indexOf(staff) % patterns.length;
@@ -87,8 +90,8 @@ export async function GET() {
     }
 
     const statuses = ["Present","Present","Present","Present","Late","Absent","Leave"];
-    for (let db = 14; db >= 1; db--) {
-      const d = new Date(today); d.setDate(today.getDate() - db);
+    for (let db2 = 14; db2 >= 1; db2--) {
+      const d = new Date(today); d.setDate(today.getDate() - db2);
       for (const staff of createdStaff) {
         await prisma.attendance.create({ data: { id: crypto.randomUUID(), staffId: staff.id, storeId: staff.storeId, date: d, status: statuses[Math.floor(Math.random() * statuses.length)], updatedAt: new Date() } });
       }
@@ -142,7 +145,7 @@ export async function GET() {
     ];
     await prisma.weeklyChecklist.create({ data: { id: crypto.randomUUID(), weekStartDate: thisMonday, items: JSON.stringify(checklistItems), completedItems: JSON.stringify(["3","5"]), updatedAt: new Date() } });
 
-    return NextResponse.json({ success: true, message: "✅ Database set up and seeded! Go to the home page now." });
+    return NextResponse.json({ success: true, message: "✅ Done! Tables created and data seeded. Go to the home page now." });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
