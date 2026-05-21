@@ -1,17 +1,21 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import { ChevronLeft, ChevronRight, Download, ChevronDown } from "lucide-react";
+import { ChevronLeft, ChevronRight, Download, ChevronDown, Upload } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { getWeekDates, getWeekLabel, getShiftColor } from "@/lib/utils";
+import { ImportModal } from "./ImportModal";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 export function ScheduleClient({ stores }: { stores: any[] }) {
+  const router = useRouter();
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const [weekOffset, setWeekOffset] = useState(0);
   const [scheduleMap, setScheduleMap] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const [showImport, setShowImport] = useState(false);
 
   const weekStart = getWeekDates(new Date(today.getTime() + weekOffset * 7 * 86400000))[0];
   const weekDates = getWeekDates(weekStart);
@@ -54,8 +58,18 @@ export function ScheduleClient({ stores }: { stores: any[] }) {
   return (
     <div className="p-4 md:p-6 space-y-4 max-w-full">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <h1 className="text-2xl font-bold text-slate-900">Weekly Schedule</h1>
-        <Button size="sm" variant="outline" onClick={exportExcel}><Download size={14} /> Export Excel</Button>
+        <div>
+          <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Team</p>
+          <h1 className="text-2xl font-bold text-slate-900 mt-0.5">Weekly Schedule</h1>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button size="sm" variant="outline" onClick={() => setShowImport(true)}>
+            <Upload size={14} /> Import Excel
+          </Button>
+          <Button size="sm" variant="outline" onClick={exportExcel}>
+            <Download size={14} /> Export
+          </Button>
+        </div>
       </div>
 
       {/* Week nav */}
@@ -152,6 +166,18 @@ export function ScheduleClient({ stores }: { stores: any[] }) {
             );
           })}
         </div>
+      )}
+
+      {showImport && (
+        <ImportModal
+          stores={stores.map((s) => ({ id: s.id, name: s.name, staff: s.staff }))}
+          onClose={() => setShowImport(false)}
+          onSuccess={() => {
+            setShowImport(false);
+            router.refresh();
+            fetchAll();
+          }}
+        />
       )}
     </div>
   );
