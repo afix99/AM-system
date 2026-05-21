@@ -5,18 +5,41 @@ import { MobileNav } from "@/components/layout/MobileNav";
 import { Toaster } from "@/components/ui/Toaster";
 
 export const metadata: Metadata = {
-  title: "Area Manager Dashboard",
+  title: "AM System",
   description: "Japanese streetwear jersey retail — Area Manager System",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "AM System",
+  },
+  icons: {
+    icon: [
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  themeColor: "#1C1917",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="h-full">
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: `
+          if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+              navigator.serviceWorker.register('/sw.js');
+            });
+          }
+        ` }} />
+      </head>
       <body className="h-full" style={{ background: "#1C1917" }}>
         <div className="flex h-full">
           <Sidebar />
