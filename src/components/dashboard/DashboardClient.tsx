@@ -1,12 +1,12 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { AlertTriangle, Plus, Check, ChevronRight, TrendingUp, Package, Users, ArrowRight } from "lucide-react";
+import { Plus, Check, ChevronRight, TrendingUp, Package, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toaster";
-import { formatDate, formatCurrency, getPriorityColor, getPriorityLabel, getAchievementBg, getWeekLabel, getWeekDates } from "@/lib/utils";
+import { formatDate, formatCurrency, getPriorityColor, getPriorityLabel, getWeekLabel, getWeekDates } from "@/lib/utils";
 import { AddTaskModal } from "@/components/tasks/AddTaskModal";
 
 type ChecklistItem = { id: string; text: string; type: string; visitNote?: string };
@@ -16,30 +16,25 @@ interface Props {
   tasks: any[];
   checklist: { id: string; items: string; completedItems: string } | null;
   weekStart: string;
-  storesMissingSchedule: { id: string; name: string }[];
   today: string;
 }
 
-export function DashboardClient({ stores, tasks: initialTasks, checklist: initialChecklist, weekStart, storesMissingSchedule, today }: Props) {
+export function DashboardClient({ stores, tasks: initialTasks, checklist: initialChecklist, weekStart, today }: Props) {
   const { toast } = useToast();
   const weekDates = getWeekDates(new Date(weekStart));
   const weekLabel = getWeekLabel(weekDates);
   const todayDate = new Date(today);
-  const dayOfWeek = todayDate.getDay(); // 0=Sun, 3=Wed
-  const showScheduleWarning = dayOfWeek >= 3 && storesMissingSchedule.length > 0;
 
   const [tasks, setTasks] = useState(initialTasks);
   const [showAddTask, setShowAddTask] = useState(false);
 
-  // Checklist state
   const defaultItems: ChecklistItem[] = [
-    { id: "1", text: "Create schedules for all 5 stores", type: "standard" },
-    { id: "2", text: "Check stock levels for all stores", type: "standard" },
-    { id: "3", text: "Review last week's sales figures", type: "standard" },
-    { id: "4", text: "Submit weekly performance notes", type: "standard" },
-    { id: "5", text: "Follow up on pending tasks", type: "standard" },
-    { id: "6", text: "Visit stores", type: "visit", visitNote: "" },
-    { id: "7", text: "Team check-in call", type: "standard" },
+    { id: "1", text: "Check stock levels for all stores", type: "standard" },
+    { id: "2", text: "Review last week's sales figures", type: "standard" },
+    { id: "3", text: "Submit weekly performance notes", type: "standard" },
+    { id: "4", text: "Follow up on pending tasks", type: "standard" },
+    { id: "5", text: "Visit stores", type: "visit", visitNote: "" },
+    { id: "6", text: "Team check-in call", type: "standard" },
   ];
 
   const parsedItems: ChecklistItem[] = initialChecklist ? JSON.parse(initialChecklist.items) : defaultItems;
@@ -106,20 +101,6 @@ export function DashboardClient({ stores, tasks: initialTasks, checklist: initia
         <p className="text-slate-500 text-sm mt-0.5">{weekLabel}</p>
       </div>
 
-      {/* Schedule warning banner */}
-      {showScheduleWarning && (
-        <Link href="/schedule" className="block">
-          <div className="flex items-center gap-3 bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-3 text-yellow-800 text-sm">
-            <AlertTriangle size={18} className="shrink-0 text-yellow-600" />
-            <span className="flex-1">
-              <strong>Schedule not set for next week:</strong>{" "}
-              {storesMissingSchedule.map((s) => s.name).join(", ")}
-            </span>
-            <ArrowRight size={16} />
-          </div>
-        </Link>
-      )}
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Weekly Checklist */}
         <div className="lg:col-span-1">
@@ -131,7 +112,6 @@ export function DashboardClient({ stores, tasks: initialTasks, checklist: initia
                   {completed.length}/{items.length} done
                 </span>
               </div>
-              {/* Progress bar */}
               <div className="mt-2 h-1.5 bg-slate-100 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-green-500 rounded-full transition-all"
@@ -257,7 +237,7 @@ export function DashboardClient({ stores, tasks: initialTasks, checklist: initia
               ? Math.round((perf.totalSales / perf.targetSales) * 100)
               : null;
             const lowStock = store.stockItems.filter((i: any) => i.quantity <= i.minStockLevel).length;
-            const todayStaff = store.schedules.filter((s: any) => s.shiftType !== "Off").length;
+            const activeStaff = store.staff.length;
 
             return (
               <Link key={store.id} href={`/stores/${store.id}`}>
@@ -275,8 +255,8 @@ export function DashboardClient({ stores, tasks: initialTasks, checklist: initia
                         <div className="flex items-center justify-center gap-1 text-slate-400 mb-0.5">
                           <Users size={12} />
                         </div>
-                        <p className="text-sm font-bold text-slate-900">{todayStaff}</p>
-                        <p className="text-xs text-slate-400">Today</p>
+                        <p className="text-sm font-bold text-slate-900">{activeStaff}</p>
+                        <p className="text-xs text-slate-400">Staff</p>
                       </div>
                       <div className="bg-slate-50 rounded-lg p-2">
                         <p className={`text-sm font-bold ${achievement !== null ? (achievement >= 100 ? "text-green-600" : achievement >= 80 ? "text-yellow-600" : "text-red-600") : "text-slate-400"}`}>

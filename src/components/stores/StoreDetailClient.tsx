@@ -4,12 +4,11 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { StoreOverviewTab } from "./StoreOverviewTab";
 import { StoreStaffTab } from "./StoreStaffTab";
-import { StoreScheduleTab } from "./StoreScheduleTab";
 import { StoreAttendanceTab } from "./StoreAttendanceTab";
 import { StoreStockTab } from "./StoreStockTab";
 import { StorePerformanceTab } from "./StorePerformanceTab";
 
-const TABS = ["Overview", "Staff", "Schedule", "Attendance", "Stock", "Performance"] as const;
+const TABS = ["Overview", "Staff", "Attendance", "Stock", "Performance"] as const;
 type Tab = (typeof TABS)[number];
 
 export function StoreDetailClient({ store }: { store: any }) {
@@ -34,7 +33,7 @@ export function StoreDetailClient({ store }: { store: any }) {
               onClick={() => setActiveTab(tab)}
               className={`px-4 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
                 activeTab === tab
-                  ? "border-slate-900 text-slate-900"
+                  ? "border-indigo-600 text-indigo-600"
                   : "border-transparent text-slate-500 hover:text-slate-700"
               }`}
             >
@@ -48,7 +47,6 @@ export function StoreDetailClient({ store }: { store: any }) {
       <div className="flex-1 p-4 md:p-6">
         {activeTab === "Overview" && <StoreOverviewTab store={store} />}
         {activeTab === "Staff" && <StoreStaffTab store={store} />}
-        {activeTab === "Schedule" && <StoreScheduleTab store={store} />}
         {activeTab === "Attendance" && <StoreAttendanceTab store={store} />}
         {activeTab === "Stock" && <StoreStockTab store={store} />}
         {activeTab === "Performance" && <StorePerformanceTab store={store} />}
