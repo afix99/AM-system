@@ -17,7 +17,6 @@ export async function GET() {
     await db.batch([
       `CREATE TABLE IF NOT EXISTS "Store" ("id" TEXT NOT NULL PRIMARY KEY, "name" TEXT NOT NULL, "location" TEXT NOT NULL, "phone" TEXT NOT NULL, "managerName" TEXT NOT NULL, "targetMonthlySales" REAL NOT NULL DEFAULT 0, "status" TEXT NOT NULL DEFAULT 'active', "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)`,
       `CREATE TABLE IF NOT EXISTS "Staff" ("id" TEXT NOT NULL PRIMARY KEY, "name" TEXT NOT NULL, "phone" TEXT NOT NULL, "storeId" TEXT NOT NULL, "role" TEXT NOT NULL DEFAULT 'Staff', "hireDate" DATETIME NOT NULL, "status" TEXT NOT NULL DEFAULT 'active', "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)`,
-      `CREATE TABLE IF NOT EXISTS "Schedule" ("id" TEXT NOT NULL PRIMARY KEY, "staffId" TEXT NOT NULL, "storeId" TEXT NOT NULL, "date" DATETIME NOT NULL, "shiftType" TEXT NOT NULL DEFAULT 'Morning', "notes" TEXT, "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)`,
       `CREATE TABLE IF NOT EXISTS "Attendance" ("id" TEXT NOT NULL PRIMARY KEY, "staffId" TEXT NOT NULL, "storeId" TEXT NOT NULL, "date" DATETIME NOT NULL, "status" TEXT NOT NULL DEFAULT 'Present', "notes" TEXT, "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)`,
       `CREATE TABLE IF NOT EXISTS "StorePerformance" ("id" TEXT NOT NULL PRIMARY KEY, "storeId" TEXT NOT NULL, "month" INTEGER NOT NULL, "year" INTEGER NOT NULL, "totalSales" REAL NOT NULL DEFAULT 0, "targetSales" REAL NOT NULL DEFAULT 0, "areaManagerNotes" TEXT, "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)`,
       `CREATE TABLE IF NOT EXISTS "StaffPerformance" ("id" TEXT NOT NULL PRIMARY KEY, "staffId" TEXT NOT NULL, "storeId" TEXT NOT NULL, "month" INTEGER NOT NULL, "year" INTEGER NOT NULL, "rating" INTEGER NOT NULL DEFAULT 3, "notes" TEXT, "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)`,
@@ -73,21 +72,6 @@ export async function GET() {
     const today = new Date(); today.setHours(0, 0, 0, 0);
     const dow = today.getDay();
     const thisMonday = new Date(today); thisMonday.setDate(today.getDate() - dow + (dow === 0 ? -6 : 1));
-    const patterns = [
-      ["M","N","HM","Off","M","N","Off"],
-      ["N","HN","M","M","Off","N","HN"],
-      ["HM","M","Off","N","HN","M","M"],
-      ["Off","M","N","HN","M","Off","N"],
-    ];
-    for (let wo = -1; wo <= 1; wo++) {
-      for (const staff of createdStaff) {
-        const pi = createdStaff.indexOf(staff) % patterns.length;
-        for (let d = 0; d < 7; d++) {
-          const date = new Date(thisMonday); date.setDate(thisMonday.getDate() + wo * 7 + d);
-          await prisma.schedule.create({ data: { id: crypto.randomUUID(), staffId: staff.id, storeId: staff.storeId, date, shiftType: patterns[pi][d], updatedAt: new Date() } });
-        }
-      }
-    }
 
     const statuses = ["Present","Present","Present","Present","Late","Absent","Leave"];
     for (let db2 = 14; db2 >= 1; db2--) {

@@ -17,7 +17,6 @@ async function main() {
   await prisma.staffPerformance.deleteMany()
   await prisma.storePerformance.deleteMany()
   await prisma.attendance.deleteMany()
-  await prisma.schedule.deleteMany()
   await prisma.staff.deleteMany()
   await prisma.store.deleteMany()
 
@@ -130,41 +129,7 @@ async function main() {
 
   console.log(`Created ${createdStaff.length} staff`)
 
-  // Create schedules for current and next week
   const today = new Date()
-  const dayOfWeek = today.getDay()
-  const diff = today.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1)
-  const thisMonday = new Date(today)
-  thisMonday.setDate(diff)
-  thisMonday.setHours(0, 0, 0, 0)
-
-  const shiftPatterns = [
-    ['Morning', 'Afternoon', 'Closing', 'Off', 'Morning', 'Afternoon', 'Off'],
-    ['Afternoon', 'Closing', 'Morning', 'Morning', 'Off', 'Afternoon', 'Closing'],
-    ['Closing', 'Morning', 'Off', 'Afternoon', 'Closing', 'Morning', 'Morning'],
-    ['Off', 'Morning', 'Afternoon', 'Closing', 'Morning', 'Off', 'Afternoon'],
-  ]
-
-  for (let weekOffset = -1; weekOffset <= 1; weekOffset++) {
-    for (const staff of createdStaff) {
-      const patternIdx = createdStaff.indexOf(staff) % shiftPatterns.length
-      for (let day = 0; day < 7; day++) {
-        const schedDate = new Date(thisMonday)
-        schedDate.setDate(thisMonday.getDate() + weekOffset * 7 + day)
-        const shiftType = shiftPatterns[patternIdx][day]
-        await prisma.schedule.create({
-          data: {
-            staffId: staff.id,
-            storeId: staff.storeId,
-            date: schedDate,
-            shiftType,
-          },
-        })
-      }
-    }
-  }
-
-  console.log('Created schedules')
 
   // Create attendance for past 2 weeks
   const attendanceStatuses = ['Present', 'Present', 'Present', 'Present', 'Late', 'Absent', 'Leave']
@@ -328,7 +293,11 @@ async function main() {
   console.log('Created tasks')
 
   // Create weekly checklist
-  const weekStart = new Date(thisMonday)
+  const dayOfWeek = today.getDay()
+  const diff = today.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1)
+  const weekStart = new Date(today)
+  weekStart.setDate(diff)
+  weekStart.setHours(0, 0, 0, 0)
   const checklistItems = [
     { id: '1', text: 'Create schedules for all 5 stores', type: 'standard' },
     { id: '2', text: 'Check stock levels for all stores', type: 'standard' },
