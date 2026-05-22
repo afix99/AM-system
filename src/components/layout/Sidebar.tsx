@@ -21,7 +21,7 @@ export function Sidebar() {
     >
       {/* Brand */}
       <div className="h-16 flex items-center gap-3 px-5 border-b border-white/[0.06]">
-        <ClaudeSparkle size={32} />
+        <ClaudeSparkle size={40} />
         <div>
           <p className="text-stone-100 font-semibold text-sm leading-none">Area Manager</p>
           <p className="text-stone-600 text-xs mt-0.5 font-normal">Powered by Claude</p>
