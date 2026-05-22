@@ -1,11 +1,10 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Store, Users, CheckSquare, BarChart2, Package, Sparkles } from "lucide-react";
+import { Home, Store, Users, CheckSquare, BarChart2, Package } from "lucide-react";
 
 const links = [
   { href: "/", label: "Dashboard", icon: Home },
-  { href: "/ai", label: "AI Assistant", icon: Sparkles },
   { href: "/stores", label: "Stores", icon: Store },
   { href: "/staff", label: "Staff", icon: Users },
   { href: "/tasks", label: "Tasks", icon: CheckSquare },
