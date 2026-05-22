@@ -3,6 +3,7 @@ import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { Search, Phone, Users, Award, Star, UserCheck, Clock, Plus, X, ChevronRight, GraduationCap, Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { ClaudeSparkle } from "@/components/ui/ClaudeSparkle";
 import { useToast } from "@/components/ui/Toaster";
 
 type StaffMember = {
@@ -109,12 +110,15 @@ export function StaffDirectoryClient({ staff: initialStaff, stores }: Props) {
   };
 
   return (
-    <div className="p-4 md:p-6 max-w-4xl mx-auto w-full space-y-6">
+    <div className="p-4 md:p-6 max-w-4xl mx-auto w-full space-y-6 stagger">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
-          <p className="text-xs font-medium text-[#D97756]/80 uppercase tracking-widest mb-0.5">Team</p>
-          <h1 className="text-2xl font-bold text-stone-100">Staff Directory</h1>
+        <div className="flex items-center gap-3">
+          <ClaudeSparkle size={44} />
+          <div>
+            <p className="text-xs font-medium text-[#D97756]/80 uppercase tracking-widest mb-0.5">Team</p>
+            <h1 className="text-2xl font-bold anim-shimmer">Staff Directory</h1>
+          </div>
         </div>
         <Button onClick={() => setShowAdd(true)}><Plus size={15} /> Add Staff</Button>
       </div>
@@ -126,10 +130,10 @@ export function StaffDirectoryClient({ staff: initialStaff, stores }: Props) {
           { label: "Managers", value: stats.manager, grad: "linear-gradient(135deg,#92400e,#d97706)", icon: <Award size={16} />     },
           { label: "Senior",   value: stats.senior,  grad: "linear-gradient(135deg,#78350f,#b45309)", icon: <Star size={16} />      },
           { label: "Staff",    value: stats.staff,   grad: "linear-gradient(135deg,#44403c,#78716c)", icon: <Users size={16} />     },
-        ].map(stat => (
-          <div key={stat.label} className="rounded-2xl p-3.5 text-white" style={{ background: stat.grad }}>
+        ].map((stat, i) => (
+          <div key={stat.label} className="card-lift rounded-2xl p-3.5 text-white cursor-default" style={{ background: stat.grad }}>
             <div className="opacity-80 mb-1.5">{stat.icon}</div>
-            <p className="text-2xl font-black leading-none">{stat.value}</p>
+            <p className="text-2xl font-black leading-none anim-stat-flash" style={{ animationDelay: `${i * 0.08}s` }}>{stat.value}</p>
             <p className="text-xs font-medium opacity-80 mt-1">{stat.label}</p>
           </div>
         ))}

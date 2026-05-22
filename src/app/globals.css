@@ -54,3 +54,117 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .claude-sparkle-pulse { animation: claudePulse 2.4s ease-in-out infinite; transform-origin: 50px 50px; transform-box: fill-box; }
 .claude-sparkle-glow { animation: claudeGlow 2.4s ease-in-out infinite; }
 .claude-sparkle-float { animation: claudeFloat 4s ease-in-out infinite; }
+
+/* === Page entry === */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.anim-fade-in-up { animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.anim-fade-in { animation: fadeIn 0.4s ease-out both; }
+.anim-scale-in { animation: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.anim-slide-in-left { animation: slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+/* === Stagger helpers === */
+.stagger > * { animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.stagger > *:nth-child(1) { animation-delay: 0.04s; }
+.stagger > *:nth-child(2) { animation-delay: 0.10s; }
+.stagger > *:nth-child(3) { animation-delay: 0.16s; }
+.stagger > *:nth-child(4) { animation-delay: 0.22s; }
+.stagger > *:nth-child(5) { animation-delay: 0.28s; }
+.stagger > *:nth-child(6) { animation-delay: 0.34s; }
+.stagger > *:nth-child(7) { animation-delay: 0.40s; }
+.stagger > *:nth-child(8) { animation-delay: 0.46s; }
+.stagger > *:nth-child(9) { animation-delay: 0.52s; }
+.stagger > *:nth-child(10) { animation-delay: 0.58s; }
+.stagger > *:nth-child(n+11) { animation-delay: 0.6s; }
+
+/* === Button micro-interactions === */
+.btn-pop { transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease; }
+.btn-pop:hover { transform: translateY(-1px); }
+.btn-pop:active { transform: translateY(0) scale(0.97); transition-duration: 0.05s; }
+
+/* === Card lift === */
+.card-lift { transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.25s ease; }
+.card-lift:hover { transform: translateY(-2px); box-shadow: 0 10px 30px -10px rgba(217,119,86,0.25); }
+
+/* === Pulsing dot (for live indicators) === */
+@keyframes livePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(217,119,86,0.6); }
+  50% { box-shadow: 0 0 0 8px rgba(217,119,86,0); }
+}
+.anim-live-dot { animation: livePulse 1.6s ease-out infinite; }
+
+/* === Shimmer (for stat numbers / accents) === */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.anim-shimmer {
+  background: linear-gradient(90deg, #F5EFE8 0%, #F4A982 25%, #D97756 50%, #F4A982 75%, #F5EFE8 100%);
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 4s linear infinite;
+}
+
+/* === Icon wiggle on hover === */
+@keyframes iconWiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-8deg); }
+  75% { transform: rotate(8deg); }
+}
+.icon-wiggle:hover svg, .icon-wiggle:hover [data-lucide] { animation: iconWiggle 0.4s ease-in-out; }
+
+/* === Count-up flash === */
+@keyframes statFlash {
+  0% { transform: scale(0.6); opacity: 0; filter: blur(4px); }
+  60% { transform: scale(1.08); opacity: 1; filter: blur(0); }
+  100% { transform: scale(1); }
+}
+.anim-stat-flash { animation: statFlash 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+/* === Gradient sweep border (for hero cards) === */
+@keyframes borderSweep {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+.anim-gradient-border {
+  position: relative;
+  background-clip: padding-box;
+}
+.anim-gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(217,119,86,0.4), rgba(244,169,130,0.6), rgba(217,119,86,0.4), rgba(244,169,130,0.6));
+  background-size: 200% 100%;
+  animation: borderSweep 4s linear infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001s !important;
+  }
+}

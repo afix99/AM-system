@@ -4,6 +4,7 @@ import { Plus, ChevronDown, ChevronUp, Pencil, Trash2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { ClaudeSparkle } from "@/components/ui/ClaudeSparkle";
 import { useToast } from "@/components/ui/Toaster";
 import { formatDate, getPriorityColor, getPriorityLabel } from "@/lib/utils";
 import { AddTaskModal } from "./AddTaskModal";
@@ -94,11 +95,14 @@ export function TasksClient({ initialTasks, stores }: { initialTasks: any[]; sto
   };
 
   return (
-    <div className="p-4 md:p-6 space-y-5 max-w-3xl mx-auto w-full">
+    <div className="p-4 md:p-6 space-y-5 max-w-3xl mx-auto w-full stagger">
       <div className="flex items-center justify-between">
-        <div>
-          <p className="text-xs font-medium text-[#D97756]/80 uppercase tracking-widest mb-0.5">Manage</p>
-          <h1 className="text-2xl font-bold text-stone-100">Tasks</h1>
+        <div className="flex items-center gap-3">
+          <ClaudeSparkle size={44} />
+          <div>
+            <p className="text-xs font-medium text-[#D97756]/80 uppercase tracking-widest mb-0.5">Manage</p>
+            <h1 className="text-2xl font-bold anim-shimmer">Tasks</h1>
+          </div>
         </div>
         <Button size="sm" onClick={() => { setEditTask(null); setShowModal(true); }}>
           <Plus size={14} /> Add Task

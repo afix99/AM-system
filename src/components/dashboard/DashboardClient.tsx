@@ -114,15 +114,18 @@ export function DashboardClient({ stores, tasks: initialTasks, checklist: initia
   const pendingTaskCount = tasks.filter((t) => t.status === "pending").length;
 
   return (
-    <div className="p-4 md:p-6 space-y-6 max-w-5xl mx-auto w-full">
+    <div className="p-4 md:p-6 space-y-6 max-w-5xl mx-auto w-full stagger">
       <div
-        className="relative overflow-hidden rounded-3xl border border-[#D97756]/20 p-6 md:p-8"
+        className="anim-gradient-border relative overflow-hidden rounded-3xl border border-[#D97756]/20 p-6 md:p-8"
         style={{ background: "radial-gradient(circle at 85% 50%, rgba(217,119,86,0.18) 0%, rgba(217,119,86,0.05) 40%, transparent 70%), linear-gradient(135deg, #2a1f17 0%, #1c1917 100%)" }}
       >
         <div className="relative z-10 flex items-center justify-between gap-4">
           <div>
-            <p className="text-xs font-medium text-[#D97756] uppercase tracking-widest mb-1">Overview</p>
-            <h1 className="text-3xl md:text-4xl font-bold text-stone-100">Dashboard</h1>
+            <p className="text-xs font-medium text-[#D97756] uppercase tracking-widest mb-1 flex items-center gap-2">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#D97756] anim-live-dot" />
+              Overview
+            </p>
+            <h1 className="text-3xl md:text-4xl font-bold anim-shimmer">Dashboard</h1>
             <p className="text-stone-400 text-sm mt-1">{weekLabel}</p>
           </div>
           <ClaudeSparkle size={120} className="shrink-0 claude-sparkle-float" />
@@ -130,19 +133,19 @@ export function DashboardClient({ stores, tasks: initialTasks, checklist: initia
       </div>
 
       <div className="grid grid-cols-3 gap-3">
-        <div className="rounded-2xl p-4 border border-white/[0.07]" style={{ background: "linear-gradient(135deg, #2d1f14 0%, #262220 100%)" }}>
+        <div className="card-lift rounded-2xl p-4 border border-white/[0.07] cursor-default" style={{ background: "linear-gradient(135deg, #2d1f14 0%, #262220 100%)" }}>
           <p className="text-xs text-stone-500 mb-1">Stores</p>
-          <p className="text-2xl font-bold text-stone-100">{stores.length}</p>
+          <p className="text-2xl font-bold text-stone-100 anim-stat-flash">{stores.length}</p>
           <p className="text-xs text-[#D97756] mt-1">Active</p>
         </div>
-        <div className="rounded-2xl p-4 border border-white/[0.07]" style={{ background: "linear-gradient(135deg, #1c1917 0%, #262220 100%)" }}>
+        <div className="card-lift rounded-2xl p-4 border border-white/[0.07] cursor-default" style={{ background: "linear-gradient(135deg, #1c1917 0%, #262220 100%)" }}>
           <p className="text-xs text-stone-500 mb-1">Staff</p>
-          <p className="text-2xl font-bold text-stone-100">{totalStaff}</p>
+          <p className="text-2xl font-bold text-stone-100 anim-stat-flash" style={{ animationDelay: "0.1s" }}>{totalStaff}</p>
           <p className="text-xs text-stone-600 mt-1">active</p>
         </div>
-        <div className="rounded-2xl p-4 border border-white/[0.07]" style={{ background: "linear-gradient(135deg, #1c1917 0%, #262220 100%)" }}>
+        <div className="card-lift rounded-2xl p-4 border border-white/[0.07] cursor-default" style={{ background: "linear-gradient(135deg, #1c1917 0%, #262220 100%)" }}>
           <p className="text-xs text-stone-500 mb-1">Tasks</p>
-          <p className="text-2xl font-bold text-stone-100">{pendingTaskCount}</p>
+          <p className="text-2xl font-bold text-stone-100 anim-stat-flash" style={{ animationDelay: "0.2s" }}>{pendingTaskCount}</p>
           <p className="text-xs text-amber-500 mt-1">pending</p>
         </div>
       </div>
