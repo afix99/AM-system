@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Store, Users, CheckSquare, BookOpen } from "lucide-react";
+import { ClaudeSparkle } from "@/components/ui/ClaudeSparkle";
 
 const links = [
   { href: "/", label: "Dashboard", icon: Home },
@@ -20,15 +21,10 @@ export function Sidebar() {
     >
       {/* Brand */}
       <div className="h-16 flex items-center gap-3 px-5 border-b border-white/[0.06]">
-        <div
-          className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-          style={{ background: "linear-gradient(135deg, #D97756, #C86645)", boxShadow: "0 0 16px rgba(217,119,86,0.35)" }}
-        >
-          <span className="text-white text-xs font-bold tracking-tight">AM</span>
-        </div>
+        <ClaudeSparkle size={40} />
         <div>
           <p className="text-stone-100 font-semibold text-sm leading-none">Area Manager</p>
-          <p className="text-stone-600 text-xs mt-0.5 font-normal">Dashboard</p>
+          <p className="text-stone-600 text-xs mt-0.5 font-normal">Powered by Claude</p>
         </div>
       </div>
 
