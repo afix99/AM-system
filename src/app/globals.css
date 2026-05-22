@@ -72,24 +72,24 @@ button, a { -webkit-tap-highlight-color: transparent; }
   from { opacity: 0; transform: translateX(-16px); }
   to { opacity: 1; transform: translateX(0); }
 }
-.anim-fade-in-up { animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
-.anim-fade-in { animation: fadeIn 0.4s ease-out both; }
-.anim-scale-in { animation: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
-.anim-slide-in-left { animation: slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.anim-fade-in-up { animation: fadeInUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.anim-fade-in { animation: fadeIn 0.2s ease-out both; }
+.anim-scale-in { animation: scaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.anim-slide-in-left { animation: slideInLeft 0.28s cubic-bezier(0.16, 1, 0.3, 1) both; }
 
 /* === Stagger helpers === */
-.stagger > * { animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
-.stagger > *:nth-child(1) { animation-delay: 0.04s; }
-.stagger > *:nth-child(2) { animation-delay: 0.10s; }
-.stagger > *:nth-child(3) { animation-delay: 0.16s; }
-.stagger > *:nth-child(4) { animation-delay: 0.22s; }
-.stagger > *:nth-child(5) { animation-delay: 0.28s; }
-.stagger > *:nth-child(6) { animation-delay: 0.34s; }
-.stagger > *:nth-child(7) { animation-delay: 0.40s; }
-.stagger > *:nth-child(8) { animation-delay: 0.46s; }
-.stagger > *:nth-child(9) { animation-delay: 0.52s; }
-.stagger > *:nth-child(10) { animation-delay: 0.58s; }
-.stagger > *:nth-child(n+11) { animation-delay: 0.6s; }
+.stagger > * { animation: fadeInUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.stagger > *:nth-child(1) { animation-delay: 0.00s; }
+.stagger > *:nth-child(2) { animation-delay: 0.03s; }
+.stagger > *:nth-child(3) { animation-delay: 0.06s; }
+.stagger > *:nth-child(4) { animation-delay: 0.09s; }
+.stagger > *:nth-child(5) { animation-delay: 0.12s; }
+.stagger > *:nth-child(6) { animation-delay: 0.15s; }
+.stagger > *:nth-child(7) { animation-delay: 0.18s; }
+.stagger > *:nth-child(8) { animation-delay: 0.21s; }
+.stagger > *:nth-child(9) { animation-delay: 0.24s; }
+.stagger > *:nth-child(10) { animation-delay: 0.27s; }
+.stagger > *:nth-child(n+11) { animation-delay: 0.30s; }
 
 /* === Button micro-interactions === */
 .btn-pop { transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease; }
@@ -142,7 +142,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
   60% { transform: scale(1.08); opacity: 1; filter: blur(0); }
   100% { transform: scale(1); }
 }
-.anim-stat-flash { animation: statFlash 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.anim-stat-flash { animation: statFlash 0.35s cubic-bezier(0.16, 1, 0.3, 1) both; }
 
 /* === Gradient sweep border (for hero cards) === */
 @keyframes borderSweep {
