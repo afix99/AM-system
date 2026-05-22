@@ -100,6 +100,13 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .card-lift { transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.25s ease; }
 .card-lift:hover { transform: translateY(-2px); box-shadow: 0 10px 30px -10px rgba(217,119,86,0.25); }
 
+/* === Nav indicator soft pulse === */
+@keyframes navIndicatorPulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(217,119,86,0.18), inset 0 0 0 1px rgba(217,119,86,0.18); }
+  50% { box-shadow: 0 0 32px rgba(217,119,86,0.40), inset 0 0 0 1px rgba(217,119,86,0.35); }
+}
+.nav-indicator { animation: navIndicatorPulse 2.6s ease-in-out infinite; }
+
 /* === Pulsing dot (for live indicators) === */
 @keyframes livePulse {
   0%, 100% { box-shadow: 0 0 0 0 rgba(217,119,86,0.6); }

@@ -44,7 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="h-full" style={{ background: "#1C1917" }}>
         <div className="flex h-full">
           <Sidebar />
-          <main className="flex-1 min-w-0 flex flex-col overflow-auto pb-20 md:pb-0">
+          <main className="flex-1 min-w-0 flex flex-col overflow-auto pb-[calc(96px+env(safe-area-inset-bottom))] md:pb-0">
             {children}
           </main>
         </div>
