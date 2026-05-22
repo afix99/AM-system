@@ -28,3 +28,19 @@ button, a { -webkit-tap-highlight-color: transparent; }
 
 .toast-enter { animation: slideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
 .toast-exit { animation: fadeOut 0.15s ease-in; }
+
+@keyframes claudeSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes claudePulse {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+@keyframes claudeGlow {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(217,119,86,0.45)) drop-shadow(0 0 14px rgba(217,119,86,0.25)); }
+  50% { filter: drop-shadow(0 0 12px rgba(217,119,86,0.75)) drop-shadow(0 0 24px rgba(217,119,86,0.4)); }
+}
+.claude-sparkle-spin { animation: claudeSpin 14s linear infinite; transform-origin: 50% 50%; }
+.claude-sparkle-pulse { animation: claudePulse 3s ease-in-out infinite; transform-origin: 50% 50%; }
+.claude-sparkle-glow { animation: claudeGlow 3s ease-in-out infinite; }

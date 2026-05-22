@@ -5,6 +5,7 @@ import { Plus, Check, ChevronRight, Users, X, Store } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { ClaudeSparkle } from "@/components/ui/ClaudeSparkle";
 import { useToast } from "@/components/ui/Toaster";
 import { formatDate, getPriorityColor, getPriorityLabel, getWeekLabel, getWeekDates } from "@/lib/utils";
 import { AddTaskModal } from "@/components/tasks/AddTaskModal";
@@ -114,10 +115,13 @@ export function DashboardClient({ stores, tasks: initialTasks, checklist: initia
 
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-5xl mx-auto w-full">
-      <div>
-        <p className="text-xs font-medium text-[#D97756]/80 uppercase tracking-widest mb-1">Overview</p>
-        <h1 className="text-2xl font-bold text-stone-100">Dashboard</h1>
-        <p className="text-stone-500 text-sm mt-0.5">{weekLabel}</p>
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="text-xs font-medium text-[#D97756]/80 uppercase tracking-widest mb-1">Overview</p>
+          <h1 className="text-2xl font-bold text-stone-100">Dashboard</h1>
+          <p className="text-stone-500 text-sm mt-0.5">{weekLabel}</p>
+        </div>
+        <ClaudeSparkle size={56} className="shrink-0" />
       </div>
 
       <div className="grid grid-cols-3 gap-3">
