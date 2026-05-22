@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronRight, MapPin, Users, Store, Plus, X, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { ClaudeSparkle } from "@/components/ui/ClaudeSparkle";
 import { useToast } from "@/components/ui/Toaster";
 
 interface StoreData {
@@ -132,18 +133,21 @@ export function StoresClient({ initialStores }: { initialStores: StoreData[] }) 
 
   return (
     <div className="p-4 md:p-6 max-w-3xl mx-auto w-full">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <p className="text-xs font-medium text-[#D97756]/80 uppercase tracking-widest mb-1">Overview</p>
-          <h1 className="text-2xl font-bold text-stone-100">Stores</h1>
-          <p className="text-sm text-stone-600 mt-0.5">{stores.length} active location{stores.length !== 1 ? "s" : ""}</p>
+      <div className="flex items-center justify-between mb-6 anim-fade-in-up">
+        <div className="flex items-center gap-3">
+          <ClaudeSparkle size={44} />
+          <div>
+            <p className="text-xs font-medium text-[#D97756]/80 uppercase tracking-widest mb-1">Overview</p>
+            <h1 className="text-2xl font-bold anim-shimmer">Stores</h1>
+            <p className="text-sm text-stone-600 mt-0.5">{stores.length} active location{stores.length !== 1 ? "s" : ""}</p>
+          </div>
         </div>
         <Button onClick={() => setShowAdd(true)}>
           <Plus size={15} /> Add Store
         </Button>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-3 stagger">
         {stores.length === 0 ? (
           <div className="py-16 text-center">
             <div className="w-16 h-16 bg-white/[0.04] border border-white/[0.07] rounded-2xl flex items-center justify-center mx-auto mb-4">

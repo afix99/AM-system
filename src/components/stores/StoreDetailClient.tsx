@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { ClaudeSparkle } from "@/components/ui/ClaudeSparkle";
 import { StoreOverviewTab } from "./StoreOverviewTab";
 import { StoreStaffTab } from "./StoreStaffTab";
 import { StoreAttendanceTab } from "./StoreAttendanceTab";
@@ -34,10 +35,13 @@ export function StoreDetailClient({ store }: { store: StoreShape }) {
         >
           <ArrowLeft size={16} /> Back
         </button>
-        <div className="mb-4">
-          <p className="text-xs font-medium text-[#D97756]/70 uppercase tracking-widest mb-0.5">Store Detail</p>
-          <h1 className="text-xl font-bold text-stone-100">{store.name}</h1>
-          <p className="text-sm text-stone-500 mt-0.5">{store.location}</p>
+        <div className="mb-4 flex items-center gap-3 anim-fade-in-up">
+          <ClaudeSparkle size={40} />
+          <div>
+            <p className="text-xs font-medium text-[#D97756]/70 uppercase tracking-widest mb-0.5">Store Detail</p>
+            <h1 className="text-xl font-bold anim-shimmer">{store.name}</h1>
+            <p className="text-sm text-stone-500 mt-0.5">{store.location}</p>
+          </div>
         </div>
         <div className="flex gap-0 overflow-x-auto">
           {TABS.map((tab) => (

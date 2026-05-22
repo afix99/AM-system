@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { ClaudeSparkle } from "@/components/ui/ClaudeSparkle";
 import { useToast } from "@/components/ui/Toaster";
 
 interface Entry {
@@ -284,11 +285,14 @@ export function LibraryClient({ initialEntries }: { initialEntries: Entry[] }) {
   // List view
   return (
     <div className="p-4 md:p-6 max-w-4xl mx-auto w-full">
-      <div className="flex items-center justify-between mb-5">
-        <div>
-          <p className="text-xs font-medium text-[#D97756]/80 uppercase tracking-widest mb-1">Knowledge</p>
-          <h1 className="text-2xl font-bold text-stone-100">Library</h1>
-          <p className="text-sm text-stone-600 mt-0.5">SOPs, procedures, training materials</p>
+      <div className="flex items-center justify-between mb-5 anim-fade-in-up">
+        <div className="flex items-center gap-3">
+          <ClaudeSparkle size={44} />
+          <div>
+            <p className="text-xs font-medium text-[#D97756]/80 uppercase tracking-widest mb-1">Knowledge</p>
+            <h1 className="text-2xl font-bold anim-shimmer">Library</h1>
+            <p className="text-sm text-stone-600 mt-0.5">SOPs, procedures, training materials</p>
+          </div>
         </div>
         <Button onClick={() => setCreating(true)}>
           <Plus size={15} /> New Entry
@@ -353,7 +357,7 @@ export function LibraryClient({ initialEntries }: { initialEntries: Entry[] }) {
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-2 stagger">
           {filtered.map((entry) => (
             <button
               key={entry.id}
