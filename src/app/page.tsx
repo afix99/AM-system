@@ -15,11 +15,6 @@ export default async function HomePage() {
       where: { status: "active" },
       include: {
         staff: { where: { status: "active" } },
-        stockItems: true,
-        performances: {
-          where: { month: today.getMonth() + 1, year: today.getFullYear() },
-          take: 1,
-        },
       },
       orderBy: { name: "asc" },
     }),

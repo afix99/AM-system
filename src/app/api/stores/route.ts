@@ -6,7 +6,6 @@ export async function GET() {
     where: { status: "active" },
     include: {
       staff: { where: { status: "active" } },
-      stockItems: true,
     },
     orderBy: { name: "asc" },
   });
@@ -14,7 +13,7 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const { name, location, phone, managerName, targetMonthlySales } = await req.json();
+  const { name, location, phone, managerName } = await req.json();
   if (!name?.trim() || !location?.trim()) {
     return NextResponse.json({ error: "Name and location are required" }, { status: 400 });
   }
@@ -24,10 +23,8 @@ export async function POST(req: Request) {
       location: location.trim(),
       phone: phone?.trim() || "",
       managerName: managerName?.trim() || "",
-      targetMonthlySales: parseFloat(targetMonthlySales) || 0,
       status: "active",
     },
   });
   return NextResponse.json(store);
 }
-

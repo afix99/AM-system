@@ -13,9 +13,8 @@ export async function purgeResignedStaff(): Promise<void> {
     if (targets.length === 0) return;
 
     for (const { id } of targets) {
-      try { await prisma.$executeRaw`DELETE FROM Schedule WHERE staffId = ${id}` } catch {}
-      try { await prisma.attendance.deleteMany({ where: { staffId: id } }) } catch {}
-      try { await prisma.staffPerformance.deleteMany({ where: { staffId: id } }) } catch {}
+      try { await prisma.trainingRecord.deleteMany({ where: { staffId: id } }); } catch { /* ignore */ }
+      try { await prisma.attendance.deleteMany({ where: { staffId: id } }); } catch { /* ignore */ }
     }
 
     await prisma.$executeRaw`

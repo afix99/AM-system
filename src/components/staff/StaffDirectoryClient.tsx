@@ -1,7 +1,7 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import { Search, Phone, Users, Award, Star, UserCheck, Clock, Plus, X, ChevronRight } from "lucide-react";
+import { Search, Phone, Users, Award, Star, UserCheck, Clock, Plus, X, ChevronRight, GraduationCap, Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toaster";
 
@@ -54,6 +54,7 @@ export function StaffDirectoryClient({ staff: initialStaff, stores }: Props) {
   const [storeFilter, setStoreFilter] = useState("all");
   const [roleFilter, setRoleFilter] = useState("All");
   const [showAdd, setShowAdd] = useState(false);
+  const [trainingFor, setTrainingFor] = useState<StaffMember | null>(null);
 
   const visible = useMemo(() => staff.filter(s => s.status.toLowerCase() !== "resigned"), [staff]);
 
@@ -187,7 +188,7 @@ export function StaffDirectoryClient({ staff: initialStaff, stores }: Props) {
         </div>
       ) : isFiltering ? (
         <div className="space-y-2">
-          {filtered.map(s => <StaffCard key={s.id} staff={s} showStore removing={removingId === s.id} onRemove={() => handleRemove(s)} />)}
+          {filtered.map(s => <StaffCard key={s.id} staff={s} showStore removing={removingId === s.id} onRemove={() => handleRemove(s)} onTraining={() => setTrainingFor(s)} />)}
         </div>
       ) : (
         <div className="space-y-7">
@@ -203,7 +204,7 @@ export function StaffDirectoryClient({ staff: initialStaff, stores }: Props) {
                 </span>
               </div>
               <div className="space-y-2">
-                {group.members.map(s => <StaffCard key={s.id} staff={s} showStore={false} removing={removingId === s.id} onRemove={() => handleRemove(s)} />)}
+                {group.members.map(s => <StaffCard key={s.id} staff={s} showStore={false} removing={removingId === s.id} onRemove={() => handleRemove(s)} onTraining={() => setTrainingFor(s)} />)}
               </div>
             </div>
           ))}
@@ -211,12 +212,13 @@ export function StaffDirectoryClient({ staff: initialStaff, stores }: Props) {
       )}
 
       {showAdd && <AddStaffModal stores={stores} onClose={() => setShowAdd(false)} onSave={handleAdd} />}
+      {trainingFor && <TrainingModal staff={trainingFor} onClose={() => setTrainingFor(null)} />}
     </div>
   );
 }
 
-function StaffCard({ staff: s, showStore, removing, onRemove }: {
-  staff: StaffMember; showStore: boolean; removing: boolean; onRemove: () => void;
+function StaffCard({ staff: s, showStore, removing, onRemove, onTraining }: {
+  staff: StaffMember; showStore: boolean; removing: boolean; onRemove: () => void; onTraining: () => void;
 }) {
   const style = ROLE_STYLE[s.role] ?? ROLE_STYLE.Staff;
   const tenure = getTenure(s.hireDate);
@@ -252,10 +254,148 @@ function StaffCard({ staff: s, showStore, removing, onRemove }: {
           </span>
         </div>
       </div>
+      <button onClick={onTraining}
+        className="shrink-0 w-8 h-8 flex items-center justify-center rounded-xl text-stone-600 hover:text-[#D97756] hover:bg-[#D97756]/10 transition-all"
+        title="Training">
+        <GraduationCap size={15} />
+      </button>
       <button onClick={onRemove} disabled={removing}
-        className="shrink-0 w-8 h-8 flex items-center justify-center rounded-xl text-stone-600 hover:text-red-400 hover:bg-red-950/40 transition-all">
+        className="shrink-0 w-8 h-8 flex items-center justify-center rounded-xl text-stone-600 hover:text-red-400 hover:bg-red-950/40 transition-all"
+        title="Remove">
         <X size={15} />
       </button>
+    </div>
+  );
+}
+
+interface LibraryEntry { id: string; title: string; category: string; isTraining: boolean }
+interface TrainingRecord { id: string; libraryEntryId: string; completedDate: string }
+
+function TrainingModal({ staff, onClose }: { staff: StaffMember; onClose: () => void }) {
+  const { toast } = useToast();
+  const [entries, setEntries] = useState<LibraryEntry[]>([]);
+  const [records, setRecords] = useState<TrainingRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState<string | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      try {
+        const [libRes, recRes] = await Promise.all([
+          fetch("/api/library"),
+          fetch(`/api/staff/${staff.id}/training`),
+        ]);
+        const lib: LibraryEntry[] = await libRes.json();
+        const rec: TrainingRecord[] = await recRes.json();
+        setEntries(lib.filter(e => e.isTraining));
+        setRecords(rec);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [staff.id]);
+
+  const recordFor = (entryId: string) => records.find(r => r.libraryEntryId === entryId);
+
+  const markTrained = async (entryId: string) => {
+    setSaving(entryId);
+    try {
+      const res = await fetch(`/api/staff/${staff.id}/training`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ libraryEntryId: entryId, completedDate: new Date().toISOString() }),
+      });
+      if (!res.ok) throw new Error();
+      const created = await res.json();
+      setRecords(prev => {
+        const existing = prev.find(r => r.libraryEntryId === entryId);
+        if (existing) return prev.map(r => r.libraryEntryId === entryId ? created : r);
+        return [...prev, created];
+      });
+    } catch {
+      toast("Failed to save", "error");
+    } finally {
+      setSaving(null);
+    }
+  };
+
+  const unmark = async (recordId: string) => {
+    setSaving(recordId);
+    try {
+      const res = await fetch(`/api/training/${recordId}`, { method: "DELETE" });
+      if (!res.ok) throw new Error();
+      setRecords(prev => prev.filter(r => r.id !== recordId));
+    } catch {
+      toast("Failed to remove", "error");
+    } finally {
+      setSaving(null);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center backdrop-blur-sm" style={{ background: "rgba(0,0,0,0.65)" }}>
+      <div className="w-full max-w-md rounded-t-3xl sm:rounded-3xl overflow-hidden border border-white/[0.08]" style={{ background: "#262220" }}>
+        <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-white/[0.07]">
+          <div>
+            <h2 className="text-lg font-bold text-stone-100">Training</h2>
+            <p className="text-xs text-stone-600 mt-0.5">{staff.name}</p>
+          </div>
+          <button onClick={onClose} className="w-8 h-8 bg-white/[0.06] hover:bg-white/[0.10] rounded-xl flex items-center justify-center transition-colors">
+            <X size={15} className="text-stone-400" />
+          </button>
+        </div>
+        <div className="px-6 pb-6 pt-4 max-h-[60vh] overflow-y-auto">
+          {loading ? (
+            <div className="py-8 text-center text-stone-600 text-sm flex items-center justify-center gap-2">
+              <Loader2 size={14} className="animate-spin" /> Loading…
+            </div>
+          ) : entries.length === 0 ? (
+            <div className="py-8 text-center">
+              <GraduationCap size={32} className="text-stone-600 mx-auto mb-2" />
+              <p className="text-sm text-stone-500">No training topics yet.</p>
+              <p className="text-xs text-stone-600 mt-1">
+                Add a Library entry and mark it as <span className="text-[#D97756]">Training</span> first.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {entries.map(e => {
+                const record = recordFor(e.id);
+                const isSaving = saving === e.id || (record && saving === record.id);
+                return (
+                  <button
+                    key={e.id}
+                    onClick={() => record ? unmark(record.id) : markTrained(e.id)}
+                    disabled={!!isSaving}
+                    className={`w-full flex items-start gap-3 text-left rounded-xl px-3 py-2.5 border transition-colors ${
+                      record
+                        ? "bg-emerald-950/30 border-emerald-500/30 hover:bg-emerald-950/40"
+                        : "bg-white/[0.03] border-white/[0.07] hover:bg-white/[0.06]"
+                    }`}
+                  >
+                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 mt-0.5 ${
+                      record ? "bg-emerald-500 border-emerald-500" : "border-white/20"
+                    }`}>
+                      {record && <Check size={11} className="text-white" strokeWidth={3} />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-stone-200">{e.title}</p>
+                      <p className="text-xs text-stone-500 mt-0.5">{e.category}</p>
+                      {record && (
+                        <p className="text-xs text-emerald-400 mt-1">
+                          ✓ Trained {new Date(record.completedDate).toLocaleDateString("en-MY")}
+                        </p>
+                      )}
+                    </div>
+                    {isSaving && <Loader2 size={13} className="animate-spin text-[#D97756] shrink-0 mt-1" />}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

@@ -2,10 +2,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronRight, MapPin, Users, Store, Plus, X, Trash2, Save } from "lucide-react";
+import { ChevronRight, MapPin, Users, Store, Plus, X, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toaster";
-import { formatCurrency } from "@/lib/utils";
 
 interface StoreData {
   id: string;
@@ -13,10 +12,7 @@ interface StoreData {
   location: string;
   managerName: string;
   phone: string;
-  targetMonthlySales: number;
-  staff: any[];
-  performances: any[];
-  stockItems: any[];
+  staff: { id: string }[];
 }
 
 function AddStoreModal({ onClose, onSave }: { onClose: () => void; onSave: (s: StoreData) => void }) {
@@ -24,30 +20,24 @@ function AddStoreModal({ onClose, onSave }: { onClose: () => void; onSave: (s: S
   const [location, setLocation] = useState("");
   const [phone, setPhone] = useState("");
   const [managerName, setManagerName] = useState("");
-  const [targetSales, setTargetSales] = useState("");
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const validate = () => {
+  const handleSave = async () => {
     const e: Record<string, string> = {};
     if (!name.trim()) e.name = "Store name is required";
     if (!location.trim()) e.location = "Location is required";
-    return e;
-  };
-
-  const handleSave = async () => {
-    const e = validate();
     if (Object.keys(e).length) { setErrors(e); return; }
     setSaving(true);
     try {
       const res = await fetch("/api/stores", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, location, phone, managerName, targetMonthlySales: parseFloat(targetSales) || 0 }),
+        body: JSON.stringify({ name, location, phone, managerName }),
       });
       if (!res.ok) throw new Error();
       const store = await res.json();
-      onSave({ ...store, staff: [], performances: [], stockItems: [] });
+      onSave({ ...store, staff: [] });
     } catch {
       setErrors({ general: "Failed to create store. Try again." });
       setSaving(false);
@@ -73,32 +63,27 @@ function AddStoreModal({ onClose, onSave }: { onClose: () => void; onSave: (s: S
         <div className="px-6 pb-6 pt-4 space-y-4">
           <div>
             <label className={labelCls}>Store Name *</label>
-            <input autoFocus value={name} onChange={e => { setName(e.target.value); setErrors({}); }}
+            <input autoFocus value={name} onChange={(e) => { setName(e.target.value); setErrors({}); }}
               placeholder="e.g. Harajuku KL Sentral" className={inputCls} />
             {errors.name && <p className="text-red-400 text-xs mt-1">{errors.name}</p>}
           </div>
           <div>
             <label className={labelCls}>Location *</label>
-            <input value={location} onChange={e => { setLocation(e.target.value); setErrors({}); }}
+            <input value={location} onChange={(e) => { setLocation(e.target.value); setErrors({}); }}
               placeholder="e.g. Level 2, KL Sentral" className={inputCls} />
             {errors.location && <p className="text-red-400 text-xs mt-1">{errors.location}</p>}
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className={labelCls}>Manager Name</label>
-              <input value={managerName} onChange={e => setManagerName(e.target.value)}
+              <label className={labelCls}>Manager</label>
+              <input value={managerName} onChange={(e) => setManagerName(e.target.value)}
                 placeholder="e.g. Ahmad Razif" className={inputCls} />
             </div>
             <div>
               <label className={labelCls}>Phone</label>
-              <input value={phone} onChange={e => setPhone(e.target.value)}
+              <input value={phone} onChange={(e) => setPhone(e.target.value)}
                 placeholder="03-xxxx xxxx" className={inputCls} />
             </div>
-          </div>
-          <div>
-            <label className={labelCls}>Monthly Sales Target (RM)</label>
-            <input type="number" value={targetSales} onChange={e => setTargetSales(e.target.value)}
-              placeholder="0" className={inputCls} />
           </div>
 
           {errors.general && (
@@ -121,7 +106,7 @@ function AddStoreModal({ onClose, onSave }: { onClose: () => void; onSave: (s: S
   );
 }
 
-export function StoresClient({ initialStores, month, year }: { initialStores: StoreData[]; month: number; year: number }) {
+export function StoresClient({ initialStores }: { initialStores: StoreData[] }) {
   const { toast } = useToast();
   const router = useRouter();
   const [stores, setStores] = useState<StoreData[]>(initialStores);
@@ -134,7 +119,7 @@ export function StoresClient({ initialStores, month, year }: { initialStores: St
     try {
       const res = await fetch(`/api/stores/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error();
-      setStores(prev => prev.filter(s => s.id !== id));
+      setStores((prev) => prev.filter((s) => s.id !== id));
       setConfirmDeleteId(null);
       toast(`${name} removed`);
       router.refresh();
@@ -171,17 +156,6 @@ export function StoresClient({ initialStores, month, year }: { initialStores: St
             </button>
           </div>
         ) : stores.map((store) => {
-          const perf = store.performances?.[0];
-          const achievement = perf && perf.targetSales > 0
-            ? Math.round((perf.totalSales / perf.targetSales) * 100)
-            : null;
-          const lowStock = store.stockItems.filter((i: any) => i.quantity <= i.minStockLevel).length;
-          const achieveColor = achievement === null ? null :
-            achievement >= 100 ? "text-emerald-400" :
-            achievement >= 80 ? "text-amber-400" : "text-red-400";
-          const barColor = achievement === null ? null :
-            achievement >= 100 ? "#10b981" :
-            achievement >= 80 ? "#f59e0b" : "#ef4444";
           const isDeleting = deletingId === store.id;
           const isConfirming = confirmDeleteId === store.id;
 
@@ -191,11 +165,10 @@ export function StoresClient({ initialStores, month, year }: { initialStores: St
               className={`rounded-2xl border border-white/[0.07] bg-[#262220] transition-all ${isDeleting ? "opacity-0 scale-95" : "opacity-100"} ${isConfirming ? "border-red-500/30" : "hover:border-[#D97756]/30"}`}
             >
               {isConfirming ? (
-                /* Confirm delete inline */
                 <div className="p-4 flex items-center gap-3">
                   <div className="flex-1">
                     <p className="text-sm font-semibold text-stone-200">Delete <span className="text-red-400">{store.name}</span>?</p>
-                    <p className="text-xs text-stone-500 mt-0.5">This will permanently remove all staff, stock, performance and attendance data.</p>
+                    <p className="text-xs text-stone-500 mt-0.5">This will permanently remove all staff, attendance, schedule, visit, and checklist data.</p>
                   </div>
                   <div className="flex gap-2 shrink-0">
                     <button onClick={() => setConfirmDeleteId(null)} className="px-3 py-1.5 text-xs font-semibold text-stone-400 border border-white/[0.10] rounded-lg hover:bg-white/[0.06] transition-colors">
@@ -214,58 +187,27 @@ export function StoresClient({ initialStores, month, year }: { initialStores: St
                       <Store size={18} className="text-[#D97756]" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <p className="font-semibold text-stone-200 text-sm group-hover:text-white transition-colors">{store.name}</p>
-                        {lowStock > 0 && (
-                          <span className="text-xs text-red-400 font-medium bg-red-950/50 px-1.5 py-0.5 rounded-full border border-red-500/20">
-                            {lowStock} low stock
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-1 text-xs text-stone-600 mb-3">
+                      <p className="font-semibold text-stone-200 text-sm group-hover:text-white transition-colors mb-0.5">{store.name}</p>
+                      <div className="flex items-center gap-1 text-xs text-stone-600 mb-2">
                         <MapPin size={11} className="shrink-0" />
                         <span className="truncate">{store.location}</span>
                       </div>
-
-                      {perf ? (
-                        <div>
-                          <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden mb-1.5">
-                            <div className="h-full rounded-full transition-all" style={{ width: `${Math.min(achievement ?? 0, 100)}%`, background: barColor ?? "#D97756" }} />
-                          </div>
-                          <div className="flex justify-between text-xs text-stone-600">
-                            <span className="text-stone-400 font-medium">{formatCurrency(perf.totalSales)}</span>
-                            <span>/ {formatCurrency(perf.targetSales)}</span>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="h-1.5 bg-white/[0.06] rounded-full" />
-                      )}
-
-                      <div className="flex items-center gap-3 mt-2.5 text-xs text-stone-600">
+                      <div className="flex items-center gap-3 text-xs text-stone-600">
                         <span className="flex items-center gap-1"><Users size={11} /> {store.staff.length} staff</span>
-                        <span className="text-white/10">·</span>
-                        <span>{store.managerName || "—"}</span>
+                        {store.managerName && <><span className="text-white/10">·</span><span>{store.managerName}</span></>}
                       </div>
                     </div>
                   </Link>
 
-                  <div className="flex flex-col items-end gap-2 shrink-0 pt-0.5">
-                    {achievement !== null ? (
-                      <span className={`text-xl font-bold ${achieveColor}`}>{achievement}%</span>
-                    ) : (
-                      <span className="text-base text-stone-700 font-medium">—</span>
-                    )}
-                    <span className="text-xs text-stone-600">this month</span>
-                    <div className="flex items-center gap-1 mt-1">
-                      <button
-                        onClick={() => setConfirmDeleteId(store.id)}
-                        className="p-1.5 text-stone-700 hover:text-red-400 rounded-lg hover:bg-red-950/40 transition-colors"
-                        title="Delete store"
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                      <ChevronRight size={14} className="text-stone-700 group-hover:text-[#D97756] transition-colors" />
-                    </div>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      onClick={() => setConfirmDeleteId(store.id)}
+                      className="p-1.5 text-stone-700 hover:text-red-400 rounded-lg hover:bg-red-950/40 transition-colors"
+                      title="Delete store"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                    <ChevronRight size={14} className="text-stone-700 group-hover:text-[#D97756] transition-colors" />
                   </div>
                 </div>
               )}
@@ -278,7 +220,7 @@ export function StoresClient({ initialStores, month, year }: { initialStores: St
         <AddStoreModal
           onClose={() => setShowAdd(false)}
           onSave={(store) => {
-            setStores(prev => [...prev, store].sort((a, b) => a.name.localeCompare(b.name)));
+            setStores((prev) => [...prev, store].sort((a, b) => a.name.localeCompare(b.name)));
             setShowAdd(false);
             toast(`${store.name} added!`);
           }}

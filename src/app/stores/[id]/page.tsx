@@ -17,8 +17,6 @@ export default async function StoreDetailPage({ params }: { params: Promise<{ id
         where: { status: { in: ["active", "on leave", "on-leave"] } },
         orderBy: { name: "asc" },
       },
-      stockItems: { orderBy: [{ category: "asc" }, { productName: "asc" }] },
-      performances: { orderBy: [{ year: "desc" }, { month: "desc" }], take: 6 },
     },
   });
   if (!store) notFound();

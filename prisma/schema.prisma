@@ -7,22 +7,22 @@ datasource db {
 }
 
 model Store {
-  id                 String   @id @default(cuid())
-  name               String
-  location           String
-  phone              String
-  managerName        String
-  targetMonthlySales Float    @default(0)
-  status             String   @default("active")
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  id          String   @id @default(cuid())
+  name        String
+  location    String
+  phone       String
+  managerName String
+  status      String   @default("active")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  staff             Staff[]
-  attendances       Attendance[]
-  performances      StorePerformance[]
-  stockItems        StockItem[]
-  tasks             Task[]
-  staffPerformances StaffPerformance[]
+  staff              Staff[]
+  attendances        Attendance[]
+  tasks              Task[]
+  scheduleImages     ScheduleImage[]
+  visits             Visit[]
+  checklistTemplates ChecklistTemplate[]
+  checklistRuns      ChecklistRun[]
 }
 
 model Staff {
@@ -36,9 +36,9 @@ model Staff {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  store             Store              @relation(fields: [storeId], references: [id])
-  attendances       Attendance[]
-  staffPerformances StaffPerformance[]
+  store           Store            @relation(fields: [storeId], references: [id])
+  attendances     Attendance[]
+  trainingRecords TrainingRecord[]
 }
 
 model Attendance {
@@ -52,52 +52,6 @@ model Attendance {
   updatedAt DateTime @updatedAt
 
   staff Staff @relation(fields: [staffId], references: [id])
-  store Store @relation(fields: [storeId], references: [id])
-}
-
-model StorePerformance {
-  id               String   @id @default(cuid())
-  storeId          String
-  month            Int
-  year             Int
-  totalSales       Float    @default(0)
-  targetSales      Float    @default(0)
-  areaManagerNotes String?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-
-  store Store @relation(fields: [storeId], references: [id])
-}
-
-model StaffPerformance {
-  id        String   @id @default(cuid())
-  staffId   String
-  storeId   String
-  month     Int
-  year      Int
-  rating    Int      @default(3)
-  notes     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  staff Staff @relation(fields: [staffId], references: [id])
-  store Store @relation(fields: [storeId], references: [id])
-}
-
-model StockItem {
-  id            String    @id @default(cuid())
-  storeId       String
-  productName   String
-  category      String
-  size          String
-  color         String
-  quantity      Int       @default(0)
-  minStockLevel Int       @default(5)
-  sellingPrice  Float     @default(0)
-  lastRestocked DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
   store Store @relation(fields: [storeId], references: [id])
 }
 
@@ -122,4 +76,83 @@ model WeeklyChecklist {
   completedItems String   @default("[]")
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+}
+
+model ScheduleImage {
+  id            String   @id @default(cuid())
+  storeId       String
+  weekStartDate DateTime
+  imageUrl      String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  store Store @relation(fields: [storeId], references: [id])
+
+  @@unique([storeId, weekStartDate])
+}
+
+model Visit {
+  id          String   @id @default(cuid())
+  storeId     String
+  visitDate   DateTime
+  notes       String
+  photoUrls   String   @default("[]")
+  actionItems String   @default("[]")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  store Store @relation(fields: [storeId], references: [id])
+}
+
+model LibraryEntry {
+  id             String   @id @default(cuid())
+  category       String
+  title          String
+  content        String
+  attachmentUrls String   @default("[]")
+  isTraining     Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  trainingRecords TrainingRecord[]
+}
+
+model ChecklistTemplate {
+  id        String   @id @default(cuid())
+  storeId   String
+  type      String
+  items     String   @default("[]")
+  updatedAt DateTime @updatedAt
+
+  store Store @relation(fields: [storeId], references: [id])
+
+  @@unique([storeId, type])
+}
+
+model ChecklistRun {
+  id             String   @id @default(cuid())
+  storeId        String
+  type           String
+  date           DateTime
+  completedItems String   @default("[]")
+  notes          String?
+  createdAt      DateTime @default(now())
+
+  store Store @relation(fields: [storeId], references: [id])
+
+  @@unique([storeId, type, date])
+}
+
+model TrainingRecord {
+  id             String   @id @default(cuid())
+  staffId        String
+  libraryEntryId String
+  completedDate  DateTime
+  notes          String?
+  createdAt      DateTime @default(now())
+
+  staff        Staff        @relation(fields: [staffId], references: [id])
+  libraryEntry LibraryEntry @relation(fields: [libraryEntryId], references: [id])
+
+  @@unique([staffId, libraryEntryId])
 }

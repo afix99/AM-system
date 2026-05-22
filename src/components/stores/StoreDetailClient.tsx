@@ -5,19 +5,28 @@ import { ArrowLeft } from "lucide-react";
 import { StoreOverviewTab } from "./StoreOverviewTab";
 import { StoreStaffTab } from "./StoreStaffTab";
 import { StoreAttendanceTab } from "./StoreAttendanceTab";
-import { StoreStockTab } from "./StoreStockTab";
-import { StorePerformanceTab } from "./StorePerformanceTab";
+import { StoreScheduleTab } from "./StoreScheduleTab";
+import { StoreVisitsTab } from "./StoreVisitsTab";
+import { StoreChecklistTab } from "./StoreChecklistTab";
 
-const TABS = ["Overview", "Staff", "Attendance", "Stock", "Performance"] as const;
+const TABS = ["Overview", "Staff", "Attendance", "Schedule", "Visits", "Checklist"] as const;
 type Tab = (typeof TABS)[number];
 
-export function StoreDetailClient({ store }: { store: any }) {
+interface StoreShape {
+  id: string;
+  name: string;
+  location: string;
+  phone: string;
+  managerName: string;
+  staff: { id: string; name: string; role: string; phone: string; hireDate: string; status: string }[];
+}
+
+export function StoreDetailClient({ store }: { store: StoreShape }) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<Tab>("Overview");
 
   return (
     <div className="flex flex-col min-h-full">
-      {/* Header */}
       <div className="border-b border-white/[0.06] px-4 md:px-6 pt-4 pb-0" style={{ background: "#1A1512" }}>
         <button
           onClick={() => router.back()}
@@ -47,13 +56,13 @@ export function StoreDetailClient({ store }: { store: any }) {
         </div>
       </div>
 
-      {/* Tab Content */}
       <div className="flex-1 p-4 md:p-6">
         {activeTab === "Overview" && <StoreOverviewTab store={store} />}
         {activeTab === "Staff" && <StoreStaffTab store={store} />}
         {activeTab === "Attendance" && <StoreAttendanceTab store={store} />}
-        {activeTab === "Stock" && <StoreStockTab store={store} />}
-        {activeTab === "Performance" && <StorePerformanceTab store={store} />}
+        {activeTab === "Schedule" && <StoreScheduleTab storeId={store.id} />}
+        {activeTab === "Visits" && <StoreVisitsTab storeId={store.id} />}
+        {activeTab === "Checklist" && <StoreChecklistTab storeId={store.id} />}
       </div>
     </div>
   );

@@ -1,14 +1,14 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Store, Users, CheckSquare, BarChart2 } from "lucide-react";
+import { Home, Store, Users, CheckSquare, BookOpen } from "lucide-react";
 
 const links = [
   { href: "/", label: "Home", icon: Home },
   { href: "/stores", label: "Stores", icon: Store },
   { href: "/staff", label: "Staff", icon: Users },
   { href: "/tasks", label: "Tasks", icon: CheckSquare },
-  { href: "/performance", label: "Reports", icon: BarChart2 },
+  { href: "/library", label: "Library", icon: BookOpen },
 ];
 
 export function MobileNav() {

@@ -1,19 +1,36 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { Plus, Check, ChevronRight, Package, Users, X, TrendingUp } from "lucide-react";
+import { Plus, Check, ChevronRight, Users, X, Store } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toaster";
-import { formatDate, formatCurrency, getPriorityColor, getPriorityLabel, getWeekLabel, getWeekDates } from "@/lib/utils";
+import { formatDate, getPriorityColor, getPriorityLabel, getWeekLabel, getWeekDates } from "@/lib/utils";
 import { AddTaskModal } from "@/components/tasks/AddTaskModal";
 
 type ChecklistItem = { id: string; text: string; type: string; visitNote?: string };
 
+interface StoreLite {
+  id: string;
+  name: string;
+  location: string;
+  managerName: string;
+  staff: { id: string }[];
+}
+
+interface Task {
+  id: string;
+  title: string;
+  priority: number;
+  status: string;
+  dueDate: string | null;
+  store: { id: string; name: string } | null;
+}
+
 interface Props {
-  stores: any[];
-  tasks: any[];
+  stores: StoreLite[];
+  tasks: Task[];
   checklist: { id: string; items: string; completedItems: string } | null;
   weekStart: string;
   today: string;
@@ -29,12 +46,10 @@ export function DashboardClient({ stores, tasks: initialTasks, checklist: initia
   const [showAddTask, setShowAddTask] = useState(false);
 
   const defaultItems: ChecklistItem[] = [
-    { id: "1", text: "Check stock levels for all stores", type: "standard" },
-    { id: "2", text: "Review last week's sales figures", type: "standard" },
-    { id: "3", text: "Submit weekly performance notes", type: "standard" },
-    { id: "4", text: "Follow up on pending tasks", type: "standard" },
-    { id: "5", text: "Visit stores", type: "visit", visitNote: "" },
-    { id: "6", text: "Team check-in call", type: "standard" },
+    { id: "1", text: "Visit stores", type: "visit", visitNote: "" },
+    { id: "2", text: "Review pending tasks", type: "standard" },
+    { id: "3", text: "Check shift schedules", type: "standard" },
+    { id: "4", text: "Team check-in call", type: "standard" },
   ];
 
   const parsedItems: ChecklistItem[] = initialChecklist ? JSON.parse(initialChecklist.items) : defaultItems;
@@ -94,37 +109,27 @@ export function DashboardClient({ stores, tasks: initialTasks, checklist: initia
   });
 
   const progress = items.length > 0 ? Math.round((completed.length / items.length) * 100) : 0;
-  const totalSales = stores.reduce((sum, s) => sum + (s.performances?.[0]?.totalSales || 0), 0);
-  const totalTarget = stores.reduce((sum, s) => sum + (s.performances?.[0]?.targetSales || 0), 0);
-  const overallAchievement = totalTarget > 0 ? Math.round((totalSales / totalTarget) * 100) : null;
-  const lowStockCount = stores.reduce((sum, s) => sum + s.stockItems.filter((i: any) => i.quantity <= i.minStockLevel).length, 0);
+  const totalStaff = stores.reduce((sum, s) => sum + s.staff.length, 0);
   const pendingTaskCount = tasks.filter((t) => t.status === "pending").length;
 
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-5xl mx-auto w-full">
-      {/* Header */}
       <div>
         <p className="text-xs font-medium text-[#D97756]/80 uppercase tracking-widest mb-1">Overview</p>
         <h1 className="text-2xl font-bold text-stone-100">Dashboard</h1>
         <p className="text-stone-500 text-sm mt-0.5">{weekLabel}</p>
       </div>
 
-      {/* KPI Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-3 gap-3">
         <div className="rounded-2xl p-4 border border-white/[0.07]" style={{ background: "linear-gradient(135deg, #2d1f14 0%, #262220 100%)" }}>
           <p className="text-xs text-stone-500 mb-1">Stores</p>
           <p className="text-2xl font-bold text-stone-100">{stores.length}</p>
           <p className="text-xs text-[#D97756] mt-1">Active</p>
         </div>
-        <div className="rounded-2xl p-4 border border-white/[0.07]" style={{ background: "linear-gradient(135deg, #052e16 0%, #262220 100%)" }}>
-          <p className="text-xs text-stone-500 mb-1">Sales</p>
-          <p className="text-2xl font-bold text-stone-100">{overallAchievement !== null ? `${overallAchievement}%` : "—"}</p>
-          <p className="text-xs text-emerald-400 mt-1">vs target</p>
-        </div>
-        <div className="rounded-2xl p-4 border border-white/[0.07]" style={{ background: lowStockCount > 0 ? "linear-gradient(135deg, #3b0a0a 0%, #262220 100%)" : "linear-gradient(135deg, #1e1a18 0%, #262220 100%)" }}>
-          <p className="text-xs text-stone-500 mb-1">Low Stock</p>
-          <p className={`text-2xl font-bold ${lowStockCount > 0 ? "text-red-400" : "text-stone-100"}`}>{lowStockCount}</p>
-          <p className={`text-xs mt-1 ${lowStockCount > 0 ? "text-red-500" : "text-stone-600"}`}>items</p>
+        <div className="rounded-2xl p-4 border border-white/[0.07]" style={{ background: "linear-gradient(135deg, #1c1917 0%, #262220 100%)" }}>
+          <p className="text-xs text-stone-500 mb-1">Staff</p>
+          <p className="text-2xl font-bold text-stone-100">{totalStaff}</p>
+          <p className="text-xs text-stone-600 mt-1">active</p>
         </div>
         <div className="rounded-2xl p-4 border border-white/[0.07]" style={{ background: "linear-gradient(135deg, #1c1917 0%, #262220 100%)" }}>
           <p className="text-xs text-stone-500 mb-1">Tasks</p>
@@ -134,7 +139,6 @@ export function DashboardClient({ stores, tasks: initialTasks, checklist: initia
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Weekly Checklist */}
         <div className="lg:col-span-1">
           <Card>
             <CardHeader>
@@ -195,7 +199,6 @@ export function DashboardClient({ stores, tasks: initialTasks, checklist: initia
           </Card>
         </div>
 
-        {/* Task Board */}
         <div className="lg:col-span-2">
           <Card>
             <CardHeader>
@@ -259,77 +262,35 @@ export function DashboardClient({ stores, tasks: initialTasks, checklist: initia
         </div>
       </div>
 
-      {/* Store Snapshot */}
       <div>
         <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wider mb-3 flex items-center gap-2">
-          <TrendingUp size={14} className="text-[#D97756]" />
-          Store Snapshot
+          <Store size={14} className="text-[#D97756]" />
+          Stores
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-          {stores.map((store) => {
-            const perf = store.performances?.[0];
-            const achievement = perf && perf.targetSales > 0
-              ? Math.round((perf.totalSales / perf.targetSales) * 100)
-              : null;
-            const lowStock = store.stockItems.filter((i: any) => i.quantity <= i.minStockLevel).length;
-            const activeStaff = store.staff.length;
-            const achieveColor = achievement === null ? "text-stone-500" : achievement >= 100 ? "text-emerald-400" : achievement >= 80 ? "text-amber-400" : "text-red-400";
-
-            return (
-              <Link key={store.id} href={`/stores/${store.id}`}>
-                <div className="rounded-2xl border border-white/[0.07] bg-[#262220] hover:border-[#D97756]/30 hover:bg-[#2E2420] transition-all cursor-pointer group p-4">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <p className="font-semibold text-stone-200 text-sm group-hover:text-white transition-colors">{store.name}</p>
-                      <p className="text-xs text-stone-600 mt-0.5">{store.managerName}</p>
-                    </div>
-                    <ChevronRight size={15} className="text-stone-700 group-hover:text-[#D97756] transition-colors mt-0.5" />
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-2 text-center mb-3">
-                    <div className="bg-white/[0.03] rounded-xl p-2 border border-white/[0.05]">
-                      <Users size={12} className="mx-auto text-stone-600 mb-0.5" />
-                      <p className="text-sm font-bold text-stone-200">{activeStaff}</p>
-                      <p className="text-xs text-stone-600">Staff</p>
-                    </div>
-                    <div className="bg-white/[0.03] rounded-xl p-2 border border-white/[0.05]">
-                      <p className={`text-sm font-bold ${achieveColor}`}>{achievement !== null ? `${achievement}%` : "—"}</p>
-                      <p className="text-xs text-stone-600">Sales</p>
-                    </div>
-                    <div className={`rounded-xl p-2 border ${lowStock > 0 ? "bg-red-950/30 border-red-500/20" : "bg-white/[0.03] border-white/[0.05]"}`}>
-                      <Package size={12} className={`mx-auto mb-0.5 ${lowStock > 0 ? "text-red-500" : "text-stone-600"}`} />
-                      <p className={`text-sm font-bold ${lowStock > 0 ? "text-red-400" : "text-stone-200"}`}>{lowStock}</p>
-                      <p className={`text-xs ${lowStock > 0 ? "text-red-600" : "text-stone-600"}`}>Low</p>
-                    </div>
-                  </div>
-
-                  {perf && (
-                    <>
-                      <div className="h-1 bg-white/[0.06] rounded-full overflow-hidden mb-1.5">
-                        <div
-                          className="h-full rounded-full transition-all"
-                          style={{
-                            width: `${Math.min(achievement ?? 0, 100)}%`,
-                            background: (achievement ?? 0) >= 100 ? "#10b981" : (achievement ?? 0) >= 80 ? "#f59e0b" : "#ef4444",
-                          }}
-                        />
-                      </div>
-                      <div className="flex justify-between text-xs text-stone-600">
-                        <span className="text-stone-500">{formatCurrency(perf.totalSales)}</span>
-                        <span>/ {formatCurrency(perf.targetSales)}</span>
-                      </div>
-                    </>
-                  )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+          {stores.map((store) => (
+            <Link key={store.id} href={`/stores/${store.id}`}>
+              <div className="rounded-2xl border border-white/[0.07] bg-[#262220] hover:border-[#D97756]/30 hover:bg-[#2E2420] transition-all cursor-pointer group p-4 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl border border-[#D97756]/20 flex items-center justify-center shrink-0 group-hover:border-[#D97756]/40 transition-colors" style={{ background: "rgba(217,119,86,0.08)" }}>
+                  <Store size={18} className="text-[#D97756]" />
                 </div>
-              </Link>
-            );
-          })}
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-stone-200 text-sm group-hover:text-white transition-colors truncate">{store.name}</p>
+                  <p className="text-xs text-stone-600 truncate">{store.managerName || "—"}</p>
+                  <div className="flex items-center gap-1 mt-0.5 text-xs text-stone-600">
+                    <Users size={11} /> {store.staff.length} staff
+                  </div>
+                </div>
+                <ChevronRight size={15} className="text-stone-700 group-hover:text-[#D97756] transition-colors" />
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
 
       {showAddTask && (
         <AddTaskModal
-          stores={stores.map((s: any) => ({ id: s.id, name: s.name }))}
+          stores={stores.map((s) => ({ id: s.id, name: s.name }))}
           onClose={() => setShowAddTask(false)}
           onSave={(task) => {
             setTasks((prev) => [...prev, task]);

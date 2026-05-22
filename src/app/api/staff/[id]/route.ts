@@ -11,11 +11,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  // Wipe any legacy Schedule rows first (table may still exist in DB even though removed from schema)
-  try { await prisma.$executeRaw`DELETE FROM Schedule WHERE staffId = ${id}` } catch {}
-  // Delete Prisma-managed child records before deleting staff
+  await prisma.trainingRecord.deleteMany({ where: { staffId: id } });
   await prisma.attendance.deleteMany({ where: { staffId: id } });
-  await prisma.staffPerformance.deleteMany({ where: { staffId: id } });
   await prisma.staff.delete({ where: { id } });
   return NextResponse.json({ ok: true });
 }

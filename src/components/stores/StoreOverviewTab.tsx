@@ -5,19 +5,18 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toaster";
-import { formatCurrency } from "@/lib/utils";
 
-export function StoreOverviewTab({ store }: { store: any }) {
+interface StoreShape {
+  id: string;
+  name: string;
+  location: string;
+  phone: string;
+  managerName: string;
+}
+
+export function StoreOverviewTab({ store }: { store: StoreShape }) {
   const { toast } = useToast();
   const router = useRouter();
-  const today = new Date();
-  const month = today.getMonth() + 1;
-  const year = today.getFullYear();
-
-  const currentPerf = store.performances?.find((p: any) => p.month === month && p.year === year);
-  const [totalSales, setTotalSales] = useState(currentPerf?.totalSales?.toString() || "");
-  const [notes, setNotes] = useState(currentPerf?.areaManagerNotes || "");
-  const [saving, setSaving] = useState(false);
 
   const [editing, setEditing] = useState(false);
   const [editSaving, setEditSaving] = useState(false);
@@ -25,27 +24,6 @@ export function StoreOverviewTab({ store }: { store: any }) {
   const [location, setLocation] = useState(store.location);
   const [phone, setPhone] = useState(store.phone);
   const [managerName, setManagerName] = useState(store.managerName);
-  const [targetSales, setTargetSales] = useState(store.targetMonthlySales?.toString() || "");
-
-  const achievement = currentPerf && store.targetMonthlySales > 0
-    ? Math.round((currentPerf.totalSales / store.targetMonthlySales) * 100)
-    : totalSales && store.targetMonthlySales > 0
-    ? Math.round((parseFloat(totalSales) / store.targetMonthlySales) * 100)
-    : null;
-
-  const saveSales = async () => {
-    setSaving(true);
-    try {
-      await fetch(`/api/stores/${store.id}/performance`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ month, year, totalSales: parseFloat(totalSales) || 0, targetSales: store.targetMonthlySales, areaManagerNotes: notes }),
-      });
-      toast("Performance saved");
-    } finally {
-      setSaving(false);
-    }
-  };
 
   const saveStoreInfo = async () => {
     setEditSaving(true);
@@ -58,8 +36,6 @@ export function StoreOverviewTab({ store }: { store: any }) {
           location: location.trim(),
           phone: phone.trim(),
           managerName: managerName.trim(),
-          targetMonthlySales: parseFloat(targetSales) || 0,
-          updatedAt: new Date().toISOString(),
         }),
       });
       if (!res.ok) throw new Error("Failed to save");
@@ -78,19 +54,11 @@ export function StoreOverviewTab({ store }: { store: any }) {
     setLocation(store.location);
     setPhone(store.phone);
     setManagerName(store.managerName);
-    setTargetSales(store.targetMonthlySales?.toString() || "");
     setEditing(false);
   };
 
   const inputCls = "w-full bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-stone-200 placeholder-stone-600 focus:outline-none focus:border-[#D97756]/40";
   const labelCls = "block text-xs font-medium text-stone-500 mb-1";
-
-  const achieveBarColor = achievement === null ? "#D97756" :
-    achievement >= 100 ? "#10b981" :
-    achievement >= 80 ? "#f59e0b" : "#ef4444";
-  const achieveTextColor = achievement === null ? "text-stone-400" :
-    achievement >= 100 ? "text-emerald-400" :
-    achievement >= 80 ? "text-amber-400" : "text-red-400";
 
   return (
     <div className="space-y-4 max-w-2xl">
@@ -115,7 +83,6 @@ export function StoreOverviewTab({ store }: { store: any }) {
               <div><label className={labelCls}>Location</label><input value={location} onChange={(e) => setLocation(e.target.value)} className={inputCls} /></div>
               <div><label className={labelCls}>Phone</label><input value={phone} onChange={(e) => setPhone(e.target.value)} className={inputCls} /></div>
               <div><label className={labelCls}>Manager Name</label><input value={managerName} onChange={(e) => setManagerName(e.target.value)} className={inputCls} /></div>
-              <div><label className={labelCls}>Monthly Sales Target (RM)</label><input type="number" value={targetSales} onChange={(e) => setTargetSales(e.target.value)} className={inputCls} /></div>
               <div className="flex gap-2 pt-1">
                 <Button onClick={saveStoreInfo} disabled={editSaving} size="sm"><Save size={14} /> {editSaving ? "Saving..." : "Save Changes"}</Button>
                 <Button onClick={cancelEdit} variant="ghost" size="sm"><X size={14} /> Cancel</Button>
@@ -140,39 +107,6 @@ export function StoreOverviewTab({ store }: { store: any }) {
               ))}
             </>
           )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader><CardTitle>This Month&apos;s Sales</CardTitle></CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className={labelCls}>Actual Sales (RM)</label>
-              <input type="number" value={totalSales} onChange={(e) => setTotalSales(e.target.value)} placeholder="0" className={inputCls} />
-            </div>
-            <div>
-              <label className={labelCls}>Target (RM)</label>
-              <p className="text-sm font-semibold text-stone-300 mt-2">{formatCurrency(store.targetMonthlySales)}</p>
-            </div>
-          </div>
-          {achievement !== null && (
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-stone-500">Achievement</span>
-                <span className={`text-sm font-bold ${achieveTextColor}`}>{achievement}%</span>
-              </div>
-              <div className="h-2 bg-white/[0.06] rounded-full overflow-hidden">
-                <div className="h-full rounded-full transition-all duration-500" style={{ width: `${Math.min(achievement, 100)}%`, background: achieveBarColor }} />
-              </div>
-            </div>
-          )}
-          <div>
-            <label className={labelCls}>Area Manager Notes</label>
-            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} placeholder="Add notes about this month's performance..."
-              className={`${inputCls} resize-none`} />
-          </div>
-          <Button onClick={saveSales} disabled={saving} size="sm"><Save size={14} /> {saving ? "Saving..." : "Save"}</Button>
         </CardContent>
       </Card>
     </div>
