@@ -335,7 +335,7 @@ function TrainingModal({ staff, onClose }: { staff: StaffMember; onClose: () => 
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center backdrop-blur-sm" style={{ background: "rgba(0,0,0,0.65)" }}>
-      <div className="w-full max-w-md rounded-t-3xl sm:rounded-3xl overflow-hidden border border-white/[0.08]" style={{ background: "#262220" }}>
+      <div className="w-full max-w-md rounded-t-3xl sm:rounded-3xl overflow-hidden border border-white/[0.08]" style={{ background: "#262220", paddingBottom: "env(safe-area-inset-bottom)" }}>
         <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-white/[0.07]">
           <div>
             <h2 className="text-lg font-bold text-stone-100">Training</h2>
@@ -437,8 +437,8 @@ function AddStaffModal({ stores, onClose, onSave }: {
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center backdrop-blur-sm" style={{ background: "rgba(0,0,0,0.65)" }}>
-      <div className="w-full max-w-md rounded-t-3xl sm:rounded-3xl overflow-hidden border border-white/[0.08]" style={{ background: "#262220" }}>
-        <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-white/[0.07]">
+      <div className="w-full max-w-md rounded-t-3xl sm:rounded-3xl overflow-hidden border border-white/[0.08] flex flex-col max-h-[100dvh] sm:max-h-[90dvh]" style={{ background: "#262220" }}>
+        <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-white/[0.07] shrink-0">
           <div>
             <h2 className="text-lg font-bold text-stone-100">New Staff Member</h2>
             <p className="text-xs text-stone-600 mt-0.5">Fill in the details below</p>
@@ -447,7 +447,7 @@ function AddStaffModal({ stores, onClose, onSave }: {
             <X size={15} className="text-stone-400" />
           </button>
         </div>
-        <div className="px-6 pb-6 pt-4 space-y-4">
+        <div className="px-6 pt-4 pb-4 space-y-4 overflow-y-auto flex-1">
           <div>
             <label className="block text-xs font-bold text-stone-500 uppercase tracking-wider mb-1.5">Full Name *</label>
             <input autoFocus value={name} onChange={e => setName(e.target.value)} onKeyDown={e => e.key === "Enter" && handleSave()}
@@ -487,16 +487,19 @@ function AddStaffModal({ stores, onClose, onSave }: {
             <input type="date" value={hireDate} onChange={e => setHireDate(e.target.value)} className={inputCls} style={{ colorScheme: "dark" }} />
           </div>
           {error && <p className="text-sm text-red-400 bg-red-950/40 border border-red-500/20 px-4 py-2.5 rounded-xl">{error}</p>}
-          <div className="flex gap-2 pt-1">
-            <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-white/[0.10] text-sm font-semibold text-stone-500 hover:bg-white/[0.04] transition-colors">
-              Cancel
-            </button>
-            <button onClick={handleSave} disabled={saving || !name.trim()}
-              className="flex-1 py-2.5 rounded-xl text-white text-sm font-semibold disabled:opacity-40 transition-all shadow-lg"
-              style={{ background: "linear-gradient(135deg, #D97756, #C86645)", boxShadow: "0 4px 16px rgba(217,119,86,0.25)" }}>
-              {saving ? "Adding…" : "Add Staff"}
-            </button>
-          </div>
+        </div>
+        <div
+          className="flex gap-2 px-6 pt-3 border-t border-white/[0.07] shrink-0"
+          style={{ background: "#262220", paddingBottom: "calc(env(safe-area-inset-bottom) + 0.75rem)" }}
+        >
+          <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-white/[0.10] text-sm font-semibold text-stone-500 hover:bg-white/[0.04] transition-colors">
+            Cancel
+          </button>
+          <button onClick={handleSave} disabled={saving || !name.trim()}
+            className="flex-1 py-2.5 rounded-xl text-white text-sm font-semibold disabled:opacity-40 transition-all shadow-lg"
+            style={{ background: "linear-gradient(135deg, #D97756, #C86645)", boxShadow: "0 4px 16px rgba(217,119,86,0.25)" }}>
+            {saving ? "Adding…" : "Add Staff"}
+          </button>
         </div>
       </div>
     </div>

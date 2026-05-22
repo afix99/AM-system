@@ -39,7 +39,7 @@ export function AddTaskModal({ stores, onClose, onSave, initialTask }: Props) {
   const labelCls = "block text-sm font-medium text-stone-500 mb-1";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 backdrop-blur-sm" style={{ background: "rgba(0,0,0,0.6)" }}>
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 backdrop-blur-sm" style={{ background: "rgba(0,0,0,0.6)", paddingBottom: "max(env(safe-area-inset-bottom), 1rem)" }}>
       <div className="w-full max-w-md rounded-2xl border border-white/[0.08] overflow-hidden" style={{ background: "#262220" }}>
         <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.07]">
           <h2 className="font-semibold text-stone-200">{initialTask ? "Edit Task" : "Add Task"}</h2>

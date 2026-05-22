@@ -65,15 +65,15 @@ function NewVisitModal({ storeId, onClose, onSave }: { storeId: string; onClose:
   const labelCls = "block text-xs font-bold text-stone-500 uppercase tracking-wider mb-1.5";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center backdrop-blur-sm overflow-y-auto" style={{ background: "rgba(0,0,0,0.65)" }}>
-      <div className="w-full max-w-md rounded-t-3xl sm:rounded-3xl overflow-hidden border border-white/[0.08] my-0 sm:my-4" style={{ background: "#262220" }}>
-        <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-white/[0.07]">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center backdrop-blur-sm" style={{ background: "rgba(0,0,0,0.65)" }}>
+      <div className="w-full max-w-md rounded-t-3xl sm:rounded-3xl overflow-hidden border border-white/[0.08] my-0 sm:my-4 flex flex-col max-h-[100dvh] sm:max-h-[90dvh]" style={{ background: "#262220" }}>
+        <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-white/[0.07] shrink-0">
           <h2 className="text-lg font-bold text-stone-100">Log Visit</h2>
           <button onClick={onClose} className="w-8 h-8 bg-white/[0.06] hover:bg-white/[0.10] rounded-xl flex items-center justify-center transition-colors">
             <X size={15} className="text-stone-400" />
           </button>
         </div>
-        <div className="px-6 pb-6 pt-4 space-y-4">
+        <div className="px-6 pt-4 pb-4 space-y-4 overflow-y-auto flex-1">
           <div>
             <label className={labelCls}>Date</label>
             <input type="date" value={visitDate} onChange={(e) => setVisitDate(e.target.value)} className={inputCls} />
@@ -143,17 +143,20 @@ function NewVisitModal({ storeId, onClose, onSave }: { storeId: string; onClose:
               </div>
             )}
           </div>
-          <div className="flex gap-2 pt-1">
-            <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-white/[0.10] text-sm font-semibold text-stone-500 hover:bg-white/[0.04] transition-colors">
-              Cancel
-            </button>
-            <button onClick={handleSave} disabled={saving}
-              className="flex-1 py-2.5 rounded-xl text-white text-sm font-semibold disabled:opacity-40 inline-flex items-center justify-center gap-2"
-              style={{ background: "linear-gradient(135deg, #D97756, #C86645)", boxShadow: "0 4px 16px rgba(217,119,86,0.25)" }}>
-              {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
-              {saving ? "Saving…" : "Save Visit"}
-            </button>
-          </div>
+        </div>
+        <div
+          className="flex gap-2 px-6 pt-3 border-t border-white/[0.07] shrink-0"
+          style={{ background: "#262220", paddingBottom: "calc(env(safe-area-inset-bottom) + 0.75rem)" }}
+        >
+          <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-white/[0.10] text-sm font-semibold text-stone-500 hover:bg-white/[0.04] transition-colors">
+            Cancel
+          </button>
+          <button onClick={handleSave} disabled={saving}
+            className="flex-1 py-2.5 rounded-xl text-white text-sm font-semibold disabled:opacity-40 inline-flex items-center justify-center gap-2"
+            style={{ background: "linear-gradient(135deg, #D97756, #C86645)", boxShadow: "0 4px 16px rgba(217,119,86,0.25)" }}>
+            {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+            {saving ? "Saving…" : "Save Visit"}
+          </button>
         </div>
       </div>
     </div>

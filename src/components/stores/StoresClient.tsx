@@ -49,7 +49,7 @@ function AddStoreModal({ onClose, onSave }: { onClose: () => void; onSave: (s: S
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center backdrop-blur-sm" style={{ background: "rgba(0,0,0,0.65)" }}>
-      <div className="w-full max-w-md rounded-t-3xl sm:rounded-3xl overflow-hidden border border-white/[0.08]" style={{ background: "#262220" }}>
+      <div className="w-full max-w-md rounded-t-3xl sm:rounded-3xl overflow-hidden border border-white/[0.08]" style={{ background: "#262220", paddingBottom: "env(safe-area-inset-bottom)" }}>
         <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-white/[0.07]">
           <div>
             <h2 className="text-lg font-bold text-stone-100">Add New Store</h2>
