@@ -1,4 +1,4 @@
-const CACHE = 'am-system-v3';
+const CACHE = 'am-system-v4';
 const STATIC_RE = /\.(?:js|css|woff2?|png|svg|ico|webp|jpg|jpeg)(\?.*)?$/;
 
 self.addEventListener('install', () => self.skipWaiting());

@@ -1,11 +1,12 @@
 "use client";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { Plus, X, Save, Trash2, Camera, Calendar, ClipboardList, Loader2, Check } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toaster";
 import { compressImage } from "@/lib/image";
+import { FilePickerButton } from "@/components/ui/FilePickerButton";
 
 interface ActionItem { id: string; text: string; done: boolean }
 interface VisitData {
@@ -30,7 +31,6 @@ function NewVisitModal({ storeId, onClose, onSave }: { storeId: string; onClose:
   const [newAction, setNewAction] = useState("");
   const [photos, setPhotos] = useState<File[]>([]);
   const [saving, setSaving] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
 
   const addAction = () => {
     if (!newAction.trim()) return;
@@ -121,26 +121,14 @@ function NewVisitModal({ storeId, onClose, onSave }: { storeId: string; onClose:
           </div>
           <div>
             <label className={labelCls}>Photos ({photos.length})</label>
-            <input
-              ref={fileRef}
-              type="file"
-              accept="image/*"
+            <FilePickerButton
               multiple
-              aria-hidden
-              tabIndex={-1}
-              style={{ position: "absolute", width: 1, height: 1, opacity: 0, pointerEvents: "none", overflow: "hidden", clip: "rect(0 0 0 0)" }}
-              onChange={(e) => {
-                const files = Array.from(e.target.files ?? []);
-                setPhotos((prev) => [...prev, ...files]);
-                e.target.value = "";
-              }}
-            />
-            <button
-              onClick={() => fileRef.current?.click()}
+              accept="image/*"
+              onPick={(f) => setPhotos((prev) => [...prev, f])}
               className="w-full py-2.5 rounded-xl border border-white/[0.10] border-dashed text-sm text-stone-500 hover:text-stone-300 hover:bg-white/[0.04] transition-colors flex items-center justify-center gap-2"
             >
               <Camera size={14} /> Add Photos
-            </button>
+            </FilePickerButton>
             {photos.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-2">
                 {photos.map((p, i) => (

@@ -1,9 +1,10 @@
 "use client";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight, Upload, Trash2, Calendar, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { useToast } from "@/components/ui/Toaster";
 import { compressImage } from "@/lib/image";
+import { FilePickerButton } from "@/components/ui/FilePickerButton";
 
 interface ScheduleData {
   id: string;
@@ -34,7 +35,6 @@ export function StoreScheduleTab({ storeId }: { storeId: string }) {
   const [schedule, setSchedule] = useState<ScheduleData | null>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
 
   const fetchSchedule = useCallback(async () => {
     setLoading(true);
@@ -110,18 +110,6 @@ export function StoreScheduleTab({ storeId }: { storeId: string }) {
           </div>
         </CardHeader>
         <CardContent>
-          <input
-            ref={fileRef}
-            id={`schedule-upload-${storeId}`}
-            type="file"
-            accept="image/*"
-            style={{ position: "absolute", width: 1, height: 1, opacity: 0, pointerEvents: "none", overflow: "hidden", clip: "rect(0 0 0 0)" }}
-            onChange={(e) => {
-              const f = e.target.files?.[0];
-              if (f) handleUpload(f);
-              e.target.value = "";
-            }}
-          />
           {loading ? (
             <div className="py-12 text-center text-stone-600 text-sm flex items-center justify-center gap-2">
               <Loader2 size={14} className="animate-spin" /> Loading…
@@ -137,14 +125,14 @@ export function StoreScheduleTab({ storeId }: { storeId: string }) {
                 />
               </div>
               <div className="flex gap-2">
-                <label
-                  htmlFor={`schedule-upload-${storeId}`}
-                  aria-disabled={uploading}
-                  className={`flex-1 py-2.5 rounded-xl border border-white/[0.10] text-sm font-semibold text-stone-300 hover:bg-white/[0.04] transition-colors flex items-center justify-center gap-2 ${uploading ? "opacity-50 pointer-events-none" : "cursor-pointer"}`}
+                <FilePickerButton
+                  onPick={handleUpload}
+                  disabled={uploading}
+                  className="flex-1 py-2.5 rounded-xl border border-white/[0.10] text-sm font-semibold text-stone-300 flex items-center justify-center gap-2"
                 >
                   {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
                   Replace
-                </label>
+                </FilePickerButton>
                 <button
                   onClick={handleDelete}
                   className="py-2.5 px-4 rounded-xl border border-red-500/20 text-sm font-semibold text-red-400 hover:bg-red-950/40 transition-colors flex items-center justify-center gap-2"
@@ -159,15 +147,15 @@ export function StoreScheduleTab({ storeId }: { storeId: string }) {
                 <Calendar size={28} className="text-stone-600" />
               </div>
               <p className="text-sm text-stone-500 mb-4">No schedule for this week yet.</p>
-              <label
-                htmlFor={`schedule-upload-${storeId}`}
-                aria-disabled={uploading}
-                className={`py-2.5 px-6 rounded-xl text-white text-sm font-semibold inline-flex items-center gap-2 select-none ${uploading ? "opacity-50 pointer-events-none" : "cursor-pointer"}`}
+              <FilePickerButton
+                onPick={handleUpload}
+                disabled={uploading}
+                className="py-2.5 px-6 rounded-xl text-white text-sm font-semibold inline-flex items-center gap-2"
                 style={{ background: "linear-gradient(180deg, #F4A982 0%, #D97756 55%, #A8552F 100%)", boxShadow: "0 4px 20px -2px rgba(217,119,86,0.45), inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -6px 12px -6px rgba(0,0,0,0.35)" }}
               >
                 {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
                 {uploading ? "Uploading…" : "Upload Schedule"}
-              </label>
+              </FilePickerButton>
             </div>
           )}
         </CardContent>
