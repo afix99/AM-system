@@ -62,12 +62,15 @@ export function StoreScheduleTab({ storeId }: { storeId: string }) {
       form.append("file", file);
       form.append("week", week.toISOString());
       const res = await fetch(`/api/stores/${storeId}/schedule`, { method: "POST", body: form });
-      if (!res.ok) throw new Error();
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || `Upload failed (${res.status})`);
+      }
       const data = await res.json();
       setSchedule(data);
       toast("Schedule uploaded");
-    } catch {
-      toast("Upload failed. Make sure Vercel Blob is configured.", "error");
+    } catch (err) {
+      toast(err instanceof Error ? err.message : "Upload failed", "error");
     } finally {
       setUploading(false);
     }
@@ -109,7 +112,9 @@ export function StoreScheduleTab({ storeId }: { storeId: string }) {
             ref={fileRef}
             type="file"
             accept="image/*"
-            className="hidden"
+            aria-hidden
+            tabIndex={-1}
+            style={{ position: "absolute", width: 1, height: 1, opacity: 0, pointerEvents: "none", overflow: "hidden", clip: "rect(0 0 0 0)" }}
             onChange={(e) => {
               const f = e.target.files?.[0];
               if (f) handleUpload(f);
