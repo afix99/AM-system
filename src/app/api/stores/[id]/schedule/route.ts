@@ -28,24 +28,37 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id: storeId } = await params;
+
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    return NextResponse.json(
+      { error: "Image uploads aren't set up yet. Add BLOB_READ_WRITE_TOKEN in Vercel → Settings → Environment Variables, then redeploy." },
+      { status: 503 },
+    );
+  }
+
   const form = await req.formData();
   const file = form.get("file") as File | null;
   const weekStartDate = parseWeek(form.get("week") as string | null);
 
-  if (!file) return NextResponse.json({ error: "No file" }, { status: 400 });
+  if (!file) return NextResponse.json({ error: "No file selected" }, { status: 400 });
+  if (file.size === 0) return NextResponse.json({ error: "File is empty" }, { status: 400 });
+  if (file.size > 10 * 1024 * 1024) return NextResponse.json({ error: "File is larger than 10MB" }, { status: 413 });
 
-  const existing = await prisma.scheduleImage.findUnique({
-    where: { storeId_weekStartDate: { storeId, weekStartDate } },
-  });
-  if (existing) {
-    await deleteBlob(existing.imageUrl);
+  try {
+    const existing = await prisma.scheduleImage.findUnique({
+      where: { storeId_weekStartDate: { storeId, weekStartDate } },
+    });
+    if (existing) await deleteBlob(existing.imageUrl);
+
+    const imageUrl = await uploadBlob(file, `schedules/${storeId}`);
+    const schedule = await prisma.scheduleImage.upsert({
+      where: { storeId_weekStartDate: { storeId, weekStartDate } },
+      update: { imageUrl },
+      create: { storeId, weekStartDate, imageUrl },
+    });
+    return NextResponse.json(schedule);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    return NextResponse.json({ error: `Upload failed: ${message}` }, { status: 500 });
   }
-
-  const imageUrl = await uploadBlob(file, `schedules/${storeId}`);
-  const schedule = await prisma.scheduleImage.upsert({
-    where: { storeId_weekStartDate: { storeId, weekStartDate } },
-    update: { imageUrl },
-    create: { storeId, weekStartDate, imageUrl },
-  });
-  return NextResponse.json(schedule);
 }

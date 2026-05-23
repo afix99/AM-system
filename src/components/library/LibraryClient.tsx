@@ -128,11 +128,19 @@ function EntryForm({
           </div>
           <div>
             <label className={labelCls}>Attachments ({files.length})</label>
-            <input ref={fileRef} type="file" multiple className="hidden" onChange={(e) => {
-              const newFiles = Array.from(e.target.files ?? []);
-              setFiles((prev) => [...prev, ...newFiles]);
-              e.target.value = "";
-            }} />
+            <input
+              ref={fileRef}
+              type="file"
+              multiple
+              aria-hidden
+              tabIndex={-1}
+              style={{ position: "absolute", width: 1, height: 1, opacity: 0, pointerEvents: "none", overflow: "hidden", clip: "rect(0 0 0 0)" }}
+              onChange={(e) => {
+                const newFiles = Array.from(e.target.files ?? []);
+                setFiles((prev) => [...prev, ...newFiles]);
+                e.target.value = "";
+              }}
+            />
             <button onClick={() => fileRef.current?.click()}
               className="w-full py-2.5 rounded-xl border border-white/[0.10] border-dashed text-sm text-stone-500 hover:text-stone-300 hover:bg-white/[0.04] transition-colors flex items-center justify-center gap-2">
               <Paperclip size={14} /> Add files (PDF, images, etc.)

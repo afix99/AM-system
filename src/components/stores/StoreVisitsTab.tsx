@@ -117,7 +117,9 @@ function NewVisitModal({ storeId, onClose, onSave }: { storeId: string; onClose:
               type="file"
               accept="image/*"
               multiple
-              className="hidden"
+              aria-hidden
+              tabIndex={-1}
+              style={{ position: "absolute", width: 1, height: 1, opacity: 0, pointerEvents: "none", overflow: "hidden", clip: "rect(0 0 0 0)" }}
               onChange={(e) => {
                 const files = Array.from(e.target.files ?? []);
                 setPhotos((prev) => [...prev, ...files]);
