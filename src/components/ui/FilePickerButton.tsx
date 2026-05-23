@@ -12,11 +12,9 @@ interface Props {
 }
 
 /**
- * A file picker that's bulletproof on mobile: the <input> is positioned
- * on top of the visible content with opacity 0, so the user's tap lands
- * directly on the input. No .click() calls, no <label htmlFor>, no
- * synthetic events — the browser opens the picker because the user
- * actually tapped the input.
+ * The reliable HTML pattern: <label> wraps <input type="file">. Tapping
+ * anywhere on the label activates the input — no JS, no .click(), no
+ * z-index tricks. Works on every browser, every OS, every PWA mode.
  */
 export function FilePickerButton({
   onPick,
@@ -28,16 +26,17 @@ export function FilePickerButton({
   children,
 }: Props) {
   return (
-    <div className={`relative ${disabled ? "opacity-50" : ""} ${className}`} style={style}>
-      <span className="pointer-events-none relative z-0 inline-flex items-center justify-center gap-2 w-full">
-        {children}
-      </span>
+    <label
+      className={`select-none ${disabled ? "opacity-50 cursor-not-allowed pointer-events-none" : "cursor-pointer"} ${className}`}
+      style={style}
+    >
+      {children}
       <input
         type="file"
         accept={accept}
         multiple={multiple}
         disabled={disabled}
-        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 disabled:cursor-not-allowed"
+        className="sr-only"
         onChange={(e) => {
           const files = Array.from(e.target.files ?? []);
           if (multiple) {
@@ -48,6 +47,6 @@ export function FilePickerButton({
           e.target.value = "";
         }}
       />
-    </div>
+    </label>
   );
 }
