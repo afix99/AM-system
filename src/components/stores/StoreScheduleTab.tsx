@@ -159,7 +159,7 @@ export function StoreScheduleTab({ storeId }: { storeId: string }) {
                 onClick={() => fileRef.current?.click()}
                 disabled={uploading}
                 className="py-2.5 px-6 rounded-xl text-white text-sm font-semibold inline-flex items-center gap-2 disabled:opacity-50"
-                style={{ background: "linear-gradient(135deg, #D97756, #C86645)", boxShadow: "0 4px 16px rgba(217,119,86,0.25)" }}
+                style={{ background: "linear-gradient(180deg, #F4A982 0%, #D97756 55%, #A8552F 100%)", boxShadow: "0 4px 20px -2px rgba(217,119,86,0.45), inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -6px 12px -6px rgba(0,0,0,0.35)" }}
               >
                 {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
                 {uploading ? "Uploading…" : "Upload Schedule"}

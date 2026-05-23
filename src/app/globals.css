@@ -92,9 +92,28 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .stagger > *:nth-child(n+11) { animation-delay: 0.30s; }
 
 /* === Button micro-interactions === */
-.btn-pop { transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease; }
+.btn-pop { transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease; }
 .btn-pop:hover { transform: translateY(-1px); }
 .btn-pop:active { transform: translateY(0) scale(0.97); transition-duration: 0.05s; }
+
+/* === Neon sweep on hover (subtle light streak across the button) === */
+@keyframes btnSweep {
+  0% { transform: translateX(-120%) skewX(-20deg); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: translateX(220%) skewX(-20deg); opacity: 0; }
+}
+.btn-sweep::after {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 0;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.28), transparent);
+  pointer-events: none;
+  transform: translateX(-120%) skewX(-20deg);
+  z-index: 0;
+}
+.btn-sweep:hover::after { animation: btnSweep 0.9s cubic-bezier(0.22, 1, 0.36, 1); }
 
 /* === Card lift === */
 .card-lift { transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.25s ease; }

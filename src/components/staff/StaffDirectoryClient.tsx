@@ -501,7 +501,7 @@ function AddStaffModal({ stores, onClose, onSave }: {
           </button>
           <button onClick={handleSave} disabled={saving || !name.trim()}
             className="flex-1 py-2.5 rounded-xl text-white text-sm font-semibold disabled:opacity-40 transition-all shadow-lg"
-            style={{ background: "linear-gradient(135deg, #D97756, #C86645)", boxShadow: "0 4px 16px rgba(217,119,86,0.25)" }}>
+            style={{ background: "linear-gradient(180deg, #F4A982 0%, #D97756 55%, #A8552F 100%)", boxShadow: "0 4px 20px -2px rgba(217,119,86,0.45), inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -6px 12px -6px rgba(0,0,0,0.35)" }}>
             {saving ? "Adding…" : "Add Staff"}
           </button>
         </div>
