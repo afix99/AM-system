@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect, useCallback, useRef } from "react";
-import Image from "next/image";
 import { ChevronLeft, ChevronRight, Upload, Trash2, Calendar, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { useToast } from "@/components/ui/Toaster";
@@ -113,10 +112,9 @@ export function StoreScheduleTab({ storeId }: { storeId: string }) {
         <CardContent>
           <input
             ref={fileRef}
+            id={`schedule-upload-${storeId}`}
             type="file"
             accept="image/*"
-            aria-hidden
-            tabIndex={-1}
             style={{ position: "absolute", width: 1, height: 1, opacity: 0, pointerEvents: "none", overflow: "hidden", clip: "rect(0 0 0 0)" }}
             onChange={(e) => {
               const f = e.target.files?.[0];
@@ -131,24 +129,22 @@ export function StoreScheduleTab({ storeId }: { storeId: string }) {
           ) : schedule ? (
             <div className="space-y-3">
               <div className="relative rounded-xl overflow-hidden border border-white/[0.08] bg-white/[0.02]">
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={schedule.imageUrl}
                   alt="Shift schedule"
-                  width={1200}
-                  height={1600}
-                  className="w-full h-auto object-contain"
-                  unoptimized
+                  className="w-full h-auto object-contain block"
                 />
               </div>
               <div className="flex gap-2">
-                <button
-                  onClick={() => fileRef.current?.click()}
-                  disabled={uploading}
-                  className="flex-1 py-2.5 rounded-xl border border-white/[0.10] text-sm font-semibold text-stone-300 hover:bg-white/[0.04] transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                <label
+                  htmlFor={`schedule-upload-${storeId}`}
+                  aria-disabled={uploading}
+                  className={`flex-1 py-2.5 rounded-xl border border-white/[0.10] text-sm font-semibold text-stone-300 hover:bg-white/[0.04] transition-colors flex items-center justify-center gap-2 ${uploading ? "opacity-50 pointer-events-none" : "cursor-pointer"}`}
                 >
                   {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
                   Replace
-                </button>
+                </label>
                 <button
                   onClick={handleDelete}
                   className="py-2.5 px-4 rounded-xl border border-red-500/20 text-sm font-semibold text-red-400 hover:bg-red-950/40 transition-colors flex items-center justify-center gap-2"
@@ -163,15 +159,15 @@ export function StoreScheduleTab({ storeId }: { storeId: string }) {
                 <Calendar size={28} className="text-stone-600" />
               </div>
               <p className="text-sm text-stone-500 mb-4">No schedule for this week yet.</p>
-              <button
-                onClick={() => fileRef.current?.click()}
-                disabled={uploading}
-                className="py-2.5 px-6 rounded-xl text-white text-sm font-semibold inline-flex items-center gap-2 disabled:opacity-50"
+              <label
+                htmlFor={`schedule-upload-${storeId}`}
+                aria-disabled={uploading}
+                className={`py-2.5 px-6 rounded-xl text-white text-sm font-semibold inline-flex items-center gap-2 select-none ${uploading ? "opacity-50 pointer-events-none" : "cursor-pointer"}`}
                 style={{ background: "linear-gradient(180deg, #F4A982 0%, #D97756 55%, #A8552F 100%)", boxShadow: "0 4px 20px -2px rgba(217,119,86,0.45), inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -6px 12px -6px rgba(0,0,0,0.35)" }}
               >
                 {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
                 {uploading ? "Uploading…" : "Upload Schedule"}
-              </button>
+              </label>
             </div>
           )}
         </CardContent>
