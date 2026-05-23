@@ -1,13 +1,11 @@
 import { prisma } from "@/lib/prisma";
-import { uploadBlob, deleteBlob } from "@/lib/blob";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
-export const maxDuration = 60;
+export const maxDuration = 30;
 
 function parseWeek(weekParam: string | null): Date {
   const d = weekParam ? new Date(weekParam) : new Date();
-  // Normalize to Monday of that week
   const day = d.getDay();
   const diff = day === 0 ? -6 : 1 - day;
   d.setDate(d.getDate() + diff);
@@ -19,7 +17,6 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   const { id: storeId } = await params;
   const url = new URL(req.url);
   const weekStartDate = parseWeek(url.searchParams.get("week"));
-
   const schedule = await prisma.scheduleImage.findUnique({
     where: { storeId_weekStartDate: { storeId, weekStartDate } },
   });
@@ -28,33 +25,27 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id: storeId } = await params;
+  let body: { imageData?: string; week?: string };
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Expected JSON body" }, { status: 400 });
+  }
+  const { imageData, week } = body;
+  const weekStartDate = parseWeek(week ?? null);
 
-  if (!process.env.BLOB_READ_WRITE_TOKEN) {
-    return NextResponse.json(
-      { error: "Image uploads aren't set up yet. Add BLOB_READ_WRITE_TOKEN in Vercel → Settings → Environment Variables, then redeploy." },
-      { status: 503 },
-    );
+  if (!imageData || !imageData.startsWith("data:image/")) {
+    return NextResponse.json({ error: "Invalid image" }, { status: 400 });
+  }
+  if (imageData.length > 1_600_000) {
+    return NextResponse.json({ error: "Image is too large, even after compression" }, { status: 413 });
   }
 
-  const form = await req.formData();
-  const file = form.get("file") as File | null;
-  const weekStartDate = parseWeek(form.get("week") as string | null);
-
-  if (!file) return NextResponse.json({ error: "No file selected" }, { status: 400 });
-  if (file.size === 0) return NextResponse.json({ error: "File is empty" }, { status: 400 });
-  if (file.size > 10 * 1024 * 1024) return NextResponse.json({ error: "File is larger than 10MB" }, { status: 413 });
-
   try {
-    const existing = await prisma.scheduleImage.findUnique({
-      where: { storeId_weekStartDate: { storeId, weekStartDate } },
-    });
-    if (existing) await deleteBlob(existing.imageUrl);
-
-    const imageUrl = await uploadBlob(file, `schedules/${storeId}`);
     const schedule = await prisma.scheduleImage.upsert({
       where: { storeId_weekStartDate: { storeId, weekStartDate } },
-      update: { imageUrl },
-      create: { storeId, weekStartDate, imageUrl },
+      update: { imageUrl: imageData },
+      create: { storeId, weekStartDate, imageUrl: imageData },
     });
     return NextResponse.json(schedule);
   } catch (err) {

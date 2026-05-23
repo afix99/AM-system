@@ -1,9 +1,8 @@
 import { prisma } from "@/lib/prisma";
-import { uploadBlob } from "@/lib/blob";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
-export const maxDuration = 60;
+export const maxDuration = 30;
 
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id: storeId } = await params;
@@ -16,27 +15,27 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id: storeId } = await params;
-  const form = await req.formData();
-  const notes = (form.get("notes") as string | null) ?? "";
-  const visitDate = new Date((form.get("visitDate") as string | null) ?? new Date().toISOString());
-  const actionItemsRaw = (form.get("actionItems") as string | null) ?? "[]";
+  let body: { notes?: string; visitDate?: string; actionItems?: string; photos?: string[] };
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Expected JSON body" }, { status: 400 });
+  }
 
-  const photoUrls: string[] = [];
-  const photos = form.getAll("photos") as File[];
-  for (const photo of photos) {
-    if (photo instanceof File && photo.size > 0) {
-      const url = await uploadBlob(photo, `visits/${storeId}`);
-      photoUrls.push(url);
-    }
+  const photoUrls = (body.photos ?? []).filter((p) => typeof p === "string" && p.startsWith("data:image/"));
+  // Cap total payload — visit row shouldn't get out of hand
+  const totalSize = photoUrls.reduce((sum, p) => sum + p.length, 0);
+  if (totalSize > 4_500_000) {
+    return NextResponse.json({ error: "Photos are too large in total. Try fewer or smaller photos." }, { status: 413 });
   }
 
   const visit = await prisma.visit.create({
     data: {
       storeId,
-      visitDate,
-      notes,
+      visitDate: new Date(body.visitDate ?? new Date().toISOString()),
+      notes: body.notes ?? "",
       photoUrls: JSON.stringify(photoUrls),
-      actionItems: actionItemsRaw,
+      actionItems: body.actionItems ?? "[]",
     },
   });
   return NextResponse.json(visit);

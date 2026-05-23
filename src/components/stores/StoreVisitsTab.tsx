@@ -5,6 +5,7 @@ import { Plus, X, Save, Trash2, Camera, Calendar, ClipboardList, Loader2, Check 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toaster";
+import { compressImage } from "@/lib/image";
 
 interface ActionItem { id: string; text: string; done: boolean }
 interface VisitData {
@@ -46,17 +47,25 @@ function NewVisitModal({ storeId, onClose, onSave }: { storeId: string; onClose:
     }
     setSaving(true);
     try {
-      const form = new FormData();
-      form.append("notes", notes);
-      form.append("visitDate", new Date(visitDate).toISOString());
-      form.append("actionItems", JSON.stringify(actionItems));
-      photos.forEach((p) => form.append("photos", p));
-      const res = await fetch(`/api/stores/${storeId}/visits`, { method: "POST", body: form });
-      if (!res.ok) throw new Error();
+      const photoUrls = await Promise.all(photos.map((p) => compressImage(p, 1200, 0.72)));
+      const res = await fetch(`/api/stores/${storeId}/visits`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          notes,
+          visitDate: new Date(visitDate).toISOString(),
+          actionItems: JSON.stringify(actionItems),
+          photos: photoUrls,
+        }),
+      });
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({}));
+        throw new Error(errBody.error || `Save failed (${res.status})`);
+      }
       const v = await res.json();
       onSave(v);
-    } catch {
-      toast("Failed to save visit", "error");
+    } catch (err) {
+      toast(err instanceof Error ? err.message : "Failed to save visit", "error");
       setSaving(false);
     }
   };

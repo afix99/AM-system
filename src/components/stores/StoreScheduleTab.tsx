@@ -4,6 +4,7 @@ import Image from "next/image";
 import { ChevronLeft, ChevronRight, Upload, Trash2, Calendar, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { useToast } from "@/components/ui/Toaster";
+import { compressImage } from "@/lib/image";
 
 interface ScheduleData {
   id: string;
@@ -58,10 +59,12 @@ export function StoreScheduleTab({ storeId }: { storeId: string }) {
   const handleUpload = async (file: File) => {
     setUploading(true);
     try {
-      const form = new FormData();
-      form.append("file", file);
-      form.append("week", week.toISOString());
-      const res = await fetch(`/api/stores/${storeId}/schedule`, { method: "POST", body: form });
+      const dataUrl = await compressImage(file, 1400, 0.78);
+      const res = await fetch(`/api/stores/${storeId}/schedule`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imageData: dataUrl, week: week.toISOString() }),
+      });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         throw new Error(body.error || `Upload failed (${res.status})`);
