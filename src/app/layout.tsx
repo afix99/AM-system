@@ -4,6 +4,7 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { Toaster } from "@/components/ui/Toaster";
 import { LogoutButton } from "@/components/auth/LogoutButton";
+import { MascotMount } from "@/components/mascot/MascotProvider";
 import { readSession } from "@/lib/session";
 
 export const metadata: Metadata = {
@@ -53,6 +54,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </div>
         {session && <MobileNav />}
         {session && <LogoutButton variant="floating" />}
+        {session && <MascotMount />}
         <Toaster />
       </body>
     </html>
