@@ -3,6 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Store, Users, CheckSquare, BookOpen } from "lucide-react";
 import { ClaudeSparkle } from "@/components/ui/ClaudeSparkle";
+import { LogoutButton } from "@/components/auth/LogoutButton";
 
 const links = [
   { href: "/", label: "Dashboard", icon: Home },
@@ -49,9 +50,12 @@ export function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-white/[0.06]">
-        <p className="text-xs text-stone-700 font-medium">Japanese Streetwear</p>
-        <p className="text-xs text-stone-700">Jersey Retail Co.</p>
+      <div className="p-3 border-t border-white/[0.06] space-y-2">
+        <LogoutButton />
+        <div className="px-3">
+          <p className="text-xs text-stone-700 font-medium">Japanese Streetwear</p>
+          <p className="text-xs text-stone-700">Jersey Retail Co.</p>
+        </div>
       </div>
     </aside>
   );
