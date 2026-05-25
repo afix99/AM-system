@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.amsystem.twa",
+      "sha256_cert_fingerprints": [
+        "CE:84:03:C5:14:A2:41:AC:1D:0B:08:D8:41:04:35:9C:A1:4F:90:80:82:52:0C:07:1F:C5:E8:8E:DE:3F:98:CE"
+      ]
+    }
+  }
+]
