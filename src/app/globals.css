@@ -29,30 +29,31 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .toast-enter { animation: slideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
 .toast-exit { animation: fadeOut 0.15s ease-in; }
 
-@keyframes claudeSpin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+/* === Claude bot logo animation === */
+@keyframes claudeBotBreathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.05); }
 }
-@keyframes claudeThrob {
-  0%, 100% { transform: scale(0.92); }
-  50% { transform: scale(1.12); }
+@keyframes claudeBotHalo {
+  0%, 100% { opacity: 0.45; transform: scale(0.94); }
+  50%      { opacity: 0.85; transform: scale(1.10); }
 }
-@keyframes claudePulse {
-  0%, 100% { opacity: 0.4; transform: scale(0.9); }
-  50% { opacity: 0.9; transform: scale(1.25); }
+@keyframes claudeBotEye {
+  0%, 86%, 100% { transform: scale(1);   opacity: 0.95; }
+  92%           { transform: scale(1.5); opacity: 1;    }
 }
-@keyframes claudeGlow {
-  0%, 100% { filter: drop-shadow(0 0 10px rgba(217,119,86,0.6)) drop-shadow(0 0 22px rgba(217,119,86,0.35)); }
-  50% { filter: drop-shadow(0 0 20px rgba(217,119,86,0.95)) drop-shadow(0 0 40px rgba(217,119,86,0.55)); }
+@keyframes claudeBotGlow {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(217,119,86,0.55)) drop-shadow(0 0 18px rgba(217,119,86,0.28)); }
+  50%      { filter: drop-shadow(0 0 14px rgba(217,119,86,0.80)) drop-shadow(0 0 30px rgba(217,119,86,0.45)); }
 }
 @keyframes claudeFloat {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
 }
-.claude-sparkle-spin { animation: claudeSpin 8s linear infinite; transform-origin: 50% 50%; transform-box: fill-box; }
-.claude-sparkle-throb { animation: claudeThrob 2.4s ease-in-out infinite; transform-origin: 50px 50px; transform-box: fill-box; }
-.claude-sparkle-pulse { animation: claudePulse 2.4s ease-in-out infinite; transform-origin: 50px 50px; transform-box: fill-box; }
-.claude-sparkle-glow { animation: claudeGlow 2.4s ease-in-out infinite; }
+.claude-bot-glow  { animation: claudeBotGlow    3.4s ease-in-out infinite; }
+.claude-bot-body  { animation: claudeBotBreathe 3.4s ease-in-out infinite; transform-origin: 50px 50px; transform-box: fill-box; }
+.claude-bot-halo  { animation: claudeBotHalo    3.4s ease-in-out infinite; transform-origin: 50px 50px; transform-box: fill-box; }
+.claude-bot-eye   { animation: claudeBotEye     5.8s ease-in-out infinite; transform-origin: 50px 50px; transform-box: fill-box; }
 .claude-sparkle-float { animation: claudeFloat 4s ease-in-out infinite; }
 
 /* === Page entry === */
