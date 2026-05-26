@@ -5,7 +5,8 @@
       "namespace": "android_app",
       "package_name": "app.amsystem.twa",
       "sha256_cert_fingerprints": [
-        "CE:84:03:C5:14:A2:41:AC:1D:0B:08:D8:41:04:35:9C:A1:4F:90:80:82:52:0C:07:1F:C5:E8:8E:DE:3F:98:CE"
+        "CE:84:03:C5:14:A2:41:AC:1D:0B:08:D8:41:04:35:9C:A1:4F:90:80:82:52:0C:07:1F:C5:E8:8E:DE:3F:98:CE",
+        "3E:6C:86:71:F8:7B:A8:D4:35:FB:66:0C:68:AC:8E:FE:8B:8C:34:04:BE:6B:0C:35:94:EC:78:D5:F7:14:D5:1A"
       ]
     }
   }
