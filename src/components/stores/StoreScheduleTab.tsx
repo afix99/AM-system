@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { useToast } from "@/components/ui/Toaster";
 import { compressImage } from "@/lib/image";
 import { FilePickerButton } from "@/components/ui/FilePickerButton";
+import { useImageLightbox } from "@/components/ui/ImageLightbox";
 
 interface ScheduleData {
   id: string;
@@ -31,6 +32,7 @@ function formatWeekRange(monday: Date): string {
 
 export function StoreScheduleTab({ storeId }: { storeId: string }) {
   const { toast } = useToast();
+  const { open: openLightbox } = useImageLightbox();
   const [week, setWeek] = useState<Date>(getMonday(new Date()));
   const [schedule, setSchedule] = useState<ScheduleData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -116,14 +118,19 @@ export function StoreScheduleTab({ storeId }: { storeId: string }) {
             </div>
           ) : schedule ? (
             <div className="space-y-3">
-              <div className="relative rounded-xl overflow-hidden border border-white/[0.08] bg-white/[0.02]">
+              <button
+                type="button"
+                onClick={() => openLightbox([{ src: schedule.imageUrl, alt: "Shift schedule" }])}
+                className="relative w-full rounded-xl overflow-hidden border border-white/[0.08] bg-white/[0.02] cursor-zoom-in transition hover:border-white/[0.14] focus:outline-none focus:ring-2 focus:ring-[#D97756]"
+                aria-label="Open shift schedule preview"
+              >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={schedule.imageUrl}
                   alt="Shift schedule"
-                  className="w-full h-auto object-contain block"
+                  className="w-full h-auto object-contain block pointer-events-none"
                 />
-              </div>
+              </button>
               <div className="flex gap-2">
                 <FilePickerButton
                   onPick={handleUpload}

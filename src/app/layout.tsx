@@ -5,6 +5,7 @@ import { MobileNav } from "@/components/layout/MobileNav";
 import { Toaster } from "@/components/ui/Toaster";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { MascotMount } from "@/components/mascot/MascotProvider";
+import { ImageLightboxProvider } from "@/components/ui/ImageLightbox";
 import { readSession } from "@/lib/session";
 
 export const metadata: Metadata = {
@@ -46,16 +47,18 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         ` }} />
       </head>
       <body className="h-full" style={{ background: "#1C1917" }}>
-        <div className="flex h-full">
-          {session && <Sidebar />}
-          <main className="flex-1 min-w-0 flex flex-col overflow-auto pb-[calc(96px+env(safe-area-inset-bottom))] md:pb-0">
-            {children}
-          </main>
-        </div>
-        {session && <MobileNav />}
-        {session && <LogoutButton variant="floating" />}
-        {session && <MascotMount />}
-        <Toaster />
+        <ImageLightboxProvider>
+          <div className="flex h-full">
+            {session && <Sidebar />}
+            <main className="flex-1 min-w-0 flex flex-col overflow-auto pb-[calc(96px+env(safe-area-inset-bottom))] md:pb-0">
+              {children}
+            </main>
+          </div>
+          {session && <MobileNav />}
+          {session && <LogoutButton variant="floating" />}
+          {session && <MascotMount />}
+          <Toaster />
+        </ImageLightboxProvider>
       </body>
     </html>
   );

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toaster";
 import { compressImage } from "@/lib/image";
 import { FilePickerButton } from "@/components/ui/FilePickerButton";
+import { useImageLightbox } from "@/components/ui/ImageLightbox";
 
 interface ActionItem { id: string; text: string; done: boolean }
 interface VisitData {
@@ -164,6 +165,7 @@ function NewVisitModal({ storeId, onClose, onSave }: { storeId: string; onClose:
 
 function VisitCard({ visit, onChange, onDelete }: { visit: VisitData; onChange: (v: VisitData) => void; onDelete: () => void }) {
   const { toast } = useToast();
+  const { open: openLightbox } = useImageLightbox();
   const photos: string[] = (() => { try { return JSON.parse(visit.photoUrls); } catch { return []; } })();
   const actions: ActionItem[] = (() => { try { return JSON.parse(visit.actionItems); } catch { return []; } })();
 
@@ -211,9 +213,15 @@ function VisitCard({ visit, onChange, onDelete }: { visit: VisitData; onChange: 
         {photos.length > 0 && (
           <div className="grid grid-cols-3 gap-2 mb-3">
             {photos.map((url, i) => (
-              <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="block aspect-square rounded-lg overflow-hidden border border-white/[0.08]">
-                <Image src={url} alt={`Photo ${i + 1}`} width={200} height={200} className="w-full h-full object-cover" unoptimized />
-              </a>
+              <button
+                key={i}
+                type="button"
+                onClick={() => openLightbox(photos.map((src, idx) => ({ src, alt: `Photo ${idx + 1}` })), i)}
+                className="block aspect-square rounded-lg overflow-hidden border border-white/[0.08] cursor-zoom-in transition hover:border-white/[0.16] focus:outline-none focus:ring-2 focus:ring-[#D97756]"
+                aria-label={`Open photo ${i + 1} preview`}
+              >
+                <Image src={url} alt={`Photo ${i + 1}`} width={200} height={200} className="w-full h-full object-cover pointer-events-none" unoptimized />
+              </button>
             ))}
           </div>
         )}
